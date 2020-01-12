@@ -1,30 +1,15 @@
 const data = [{
     id: "dashboards",
-    icon: "iconsminds-shop-4",
+    icon: "simple-icon-home",
     label: "menu.dashboards",
-    to: "/app/dashboards",
-    subs: [{
-        icon: "simple-icon-briefcase",
-        label: "menu.default",
-        to: "/app/dashboards/default"
-      },
-      {
-        icon: "simple-icon-pie-chart",
-        label: "menu.analytics",
-        to: "/app/dashboards/analytics"
-      },
-      {
-        icon: "simple-icon-basket-loaded",
-        label: "menu.ecommerce",
-        to: "/app/dashboards/ecommerce"
-      },
-      {
-        icon: "simple-icon-doc",
-        label: "menu.content",
-        to: "/app/dashboards/content"
-      }
-    ]
+    to: "/app/dashboards"
   },
+  {
+    id: "newsite",
+    icon: "iconsminds-digital-drawing",
+    label: "menu.newsite",
+    to: "/app/newsite"
+  },  
   {
     id: "pages",
     icon: "iconsminds-digital-drawing",

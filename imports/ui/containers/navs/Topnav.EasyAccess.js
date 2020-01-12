@@ -20,6 +20,11 @@ const TopnavEasyAccess = () => {
             <IntlMessages id="menu.dashboards" />
           </NavLink>
 
+          <NavLink to="/app/newsite" className="icon-menu-item">
+            <i className="iconsminds-shop-4 d-block" />{" "}
+            <IntlMessages id="menu.newsite" />
+          </NavLink>
+
           <NavLink to="/app/ui" className="icon-menu-item">
             <i className="iconsminds-pantone d-block" />{" "}
             <IntlMessages id="menu.ui" />
