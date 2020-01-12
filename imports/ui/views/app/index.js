@@ -7,12 +7,19 @@ import AppLayout from '../../layout/AppLayout';
 const Dashboards = React.lazy(() =>
   import(/* webpackChunkName: "dashboards" */ './dashboards')
 );
+
+const NewSitePage = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './newsite')
+);
+
 const Pages = React.lazy(() =>
   import(/* webpackChunkName: "pages" */ './pages')
 );
+
 const Applications = React.lazy(() =>
   import(/* webpackChunkName: "applications" */ './applications')
 );
+
 const Ui = React.lazy(() => import(/* webpackChunkName: "ui" */ './ui'));
 const Menu = React.lazy(() => import(/* webpackChunkName: "menu" */ './menu'));
 const BlankPage = React.lazy(() =>
@@ -36,6 +43,10 @@ class App extends Component {
               <Route
                 path={`${match.url}/dashboards`}
                 render={props => <Dashboards {...props} />}
+              />
+              <Route
+                path={`${match.url}/newsite`}
+                render={props => <NewSitePage {...props} />}
               />
               <Route
                 path={`${match.url}/applications`}
