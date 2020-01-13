@@ -200,7 +200,7 @@ module.exports = {
   "dashboards.files": "Files",
   "dashboards.pending-for-print": "Pending for print",
   "dashboards.logs": "Logs",
-  "dashboards.gogo": "GOGO",
+  "dashboards.gogo": "ARCADIA",
   "dashboards.magic-is-in-the-details": "MAGIC IS IN THE DETAILS",
   "dashboards.yes-it-is-indeed": "Yes, it is indeed!",
   "dashboards.advanced-search": "Advanced Search",

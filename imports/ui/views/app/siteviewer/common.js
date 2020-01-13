@@ -74,7 +74,7 @@ class CommonPage extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <h1>Magdalena Cake</h1>
+            <h1>California</h1>
             <div className="text-zero top-right-button-container">
               <UncontrolledDropdown>
                 <DropdownToggle
