@@ -12,18 +12,20 @@ const NewSitePage = React.lazy(() =>
   import(/* webpackChunkName: "newsite" */ './newsite')
 );
 
-const Pages = React.lazy(() =>
-  import(/* webpackChunkName: "pages" */ './pages')
+const SiteViewerPage = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './siteviewer')
 );
 
-const Applications = React.lazy(() =>
-  import(/* webpackChunkName: "applications" */ './applications')
+const FileManager = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './filemanager')
 );
 
-const Ui = React.lazy(() => import(/* webpackChunkName: "ui" */ './ui'));
-const Menu = React.lazy(() => import(/* webpackChunkName: "menu" */ './menu'));
-const BlankPage = React.lazy(() =>
-  import(/* webpackChunkName: "blank-page" */ './blank-page')
+const Notifications = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './notification')
+);
+
+const Reporting = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './reporting')
 );
 
 class App extends Component {
@@ -49,24 +51,20 @@ class App extends Component {
                 render={props => <NewSitePage {...props} />}
               />
               <Route
-                path={`${match.url}/applications`}
-                render={props => <Applications {...props} />}
+                path={`${match.url}/siteviewer`}
+                render={props => <SiteViewerPage {...props} />}
               />
               <Route
-                path={`${match.url}/pages`}
-                render={props => <Pages {...props} />}
+                path={`${match.url}/filemanager`}
+                render={props => <FileManager {...props} />}
               />
               <Route
-                path={`${match.url}/ui`}
-                render={props => <Ui {...props} />}
+                path={`${match.url}/notifications`}
+                render={props => <Notifications {...props} />}
               />
               <Route
-                path={`${match.url}/menu`}
-                render={props => <Menu {...props} />}
-              />
-              <Route
-                path={`${match.url}/blank-page`}
-                render={props => <BlankPage {...props} />}
+                path={`${match.url}/reporting`}
+                render={props => <Reporting {...props} />}
               />
               <Redirect to="/error" />
             </Switch>
