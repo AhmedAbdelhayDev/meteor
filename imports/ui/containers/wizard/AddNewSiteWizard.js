@@ -7,13 +7,12 @@ import { BottomNavigation } from "../../components/wizard/BottomNavigation";
 import { TopNavigation } from "../../components/wizard/TopNavigation";
 import { Formik, Form, Field } from "formik";
 
-class Validation extends Component {
+class AddNewSiteWizard extends Component {
     constructor(props) {
         super(props);
         this.onClickNext = this.onClickNext.bind(this);
         this.onClickPrev = this.onClickPrev.bind(this);
-        this.validateEmail = this.validateEmail.bind(this);
-        this.validateName = this.validateName.bind(this);
+        this.validateText = this.validateText.bind(this);
         this.validatePassword = this.validatePassword.bind(this);
 
         this.form0 = React.createRef();
@@ -32,12 +31,32 @@ class Validation extends Component {
                 },
                 {
                     valid: false,
-                    name: "email",
+                    name: "antenna",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "password",
+                    name: "address",
+                    value: ""
+                },
+                {
+                    valid: false,
+                    name: "city",
+                    value: ""
+                },
+                {
+                    valid: false,
+                    name: "state",
+                    value: ""
+                },
+                {
+                    valid: false,
+                    name: "zip",
+                    value: ""
+                },
+                {
+                    valid: false,
+                    name: "region",
                     value: ""
                 }
             ]
@@ -46,28 +65,30 @@ class Validation extends Component {
 
     componentDidMount() {
         this.setState({
-            fields: [
-                { ...this.state.fields[0], form: this.form0 },
-                { ...this.state.fields[1], form: this.form1 },
-                { ...this.state.fields[2], form: this.form2 }
+            ...this.state.fields,
+            forms: [
+                {
+                    form: this.form0,
+                    fields: [this.state.fields[0], this.state.fields[1]]
+                },
+                {
+                    form: this.form1,
+                    fields: [
+                        this.state.fields[2],
+                        this.state.fields[3],
+                        this.state.fields[4],
+                        this.state.fields[5],
+                        this.state.fields[6]
+                    ]
+                }
             ]
         });
     }
 
-    validateEmail(value) {
+    validateText(value) {
         let error;
         if (!value) {
-            error = "Please enter your email address";
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-            error = "Invalid email address";
-        }
-        return error;
-    }
-
-    validateName(value) {
-        let error;
-        if (!value) {
-            error = "Please enter your name";
+            error = "Please enter value";
         } else if (value.length < 2) {
             error = "Value must be longer than 2 characters";
         }
@@ -96,18 +117,27 @@ class Validation extends Component {
     }
 
     onClickNext(goToNext, steps, step) {
+        debugger;
         if (steps.length - 1 <= steps.indexOf(step)) {
             return;
         }
         let formIndex = steps.indexOf(step);
-        let form = this.state.fields[formIndex].form.current;
-        let name = this.state.fields[formIndex].name;
+        let form = this.state.forms[formIndex].form.current;
         form.submitForm().then(() => {
-            let fields = this.state.fields;
-            fields[formIndex].value = form.state.values[name];
-            fields[formIndex].valid = form.state.errors[name] ? false : true;
-            this.setState({ fields });
-            if (!form.state.errors[name]) {
+            let orgState = this.state;
+            let fields = orgState.forms[formIndex].fields;
+            let valid = true;
+
+            fields.map(field => {
+                field.value = form.state.values[field.name];
+                field.valid = form.state.errors[field.name] ? false : true;
+                if (field.valid === false) valid = false;
+            });
+
+            orgState.forms[formIndex].fields = fields;
+            this.setState({ orgState });
+
+            if (valid) {
                 goToNext();
                 step.isDone = true;
                 if (steps.length - 2 <= steps.indexOf(step)) {
@@ -138,14 +168,15 @@ class Validation extends Component {
                         <Steps>
                             <Step
                                 id="step1"
-                                name={messages["wizard.step-name-1"]}
-                                desc={messages["wizard.step-desc-1"]}
+                                name={messages["wizard.step-newsite-name-1"]}
+                                desc={messages["wizard.step-newsite-desc-1"]}
                             >
                                 <div className="wizard-basic-step">
                                     <Formik
                                         ref={this.form0}
                                         initialValues={{
-                                            name: this.state.fields[0].value
+                                            name: this.state.fields[0].value,
+                                            antenna: this.state.fields[1].value
                                         }}
                                         onSubmit={() => {}}
                                     >
@@ -153,19 +184,42 @@ class Validation extends Component {
                                             <Form className="av-tooltip tooltip-label-right">
                                                 <FormGroup>
                                                     <Label>
-                                                        {messages["forms.name"]}
+                                                        {messages["site.name"]}
                                                     </Label>
                                                     <Field
                                                         className="form-control"
                                                         name="name"
                                                         validate={
-                                                            this.validateName
+                                                            this.validateText
                                                         }
                                                     />
                                                     {errors.name &&
                                                         touched.name && (
                                                             <div className="invalid-feedback d-block">
                                                                 {errors.name}
+                                                            </div>
+                                                        )}
+                                                </FormGroup>
+
+                                                <FormGroup>
+                                                    <Label>
+                                                        {
+                                                            messages[
+                                                                "site.antenna"
+                                                            ]
+                                                        }
+                                                    </Label>
+                                                    <Field
+                                                        className="form-control"
+                                                        name="antenna"
+                                                        validate={
+                                                            this.validateText
+                                                        }
+                                                    />
+                                                    {errors.antenna &&
+                                                        touched.antenna && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {errors.antenna}
                                                             </div>
                                                         )}
                                                 </FormGroup>
@@ -176,56 +230,18 @@ class Validation extends Component {
                             </Step>
                             <Step
                                 id="step2"
-                                name={messages["wizard.step-name-2"]}
-                                desc={messages["wizard.step-desc-2"]}
+                                name={messages["wizard.step-newsite-name-2"]}
+                                desc={messages["wizard.step-newsite-desc-2"]}
                             >
                                 <div className="wizard-basic-step">
                                     <Formik
                                         ref={this.form1}
                                         initialValues={{
-                                            email: this.state.fields[1].value
-                                        }}
-                                        onSubmit={() => {}}
-                                    >
-                                        {({ errors, touched }) => (
-                                            <Form className="av-tooltip tooltip-label-right">
-                                                <FormGroup>
-                                                    <Label>
-                                                        {
-                                                            messages[
-                                                                "forms.email"
-                                                            ]
-                                                        }
-                                                    </Label>
-                                                    <Field
-                                                        className="form-control"
-                                                        name="email"
-                                                        validate={
-                                                            this.validateEmail
-                                                        }
-                                                    />
-                                                    {errors.email &&
-                                                        touched.email && (
-                                                            <div className="invalid-feedback d-block">
-                                                                {errors.email}
-                                                            </div>
-                                                        )}
-                                                </FormGroup>
-                                            </Form>
-                                        )}
-                                    </Formik>
-                                </div>
-                            </Step>
-                            <Step
-                                id="step3"
-                                name={messages["wizard.step-name-3"]}
-                                desc={messages["wizard.step-desc-3"]}
-                            >
-                                <div className="wizard-basic-step">
-                                    <Formik
-                                        ref={this.form2}
-                                        initialValues={{
-                                            password: this.state.fields[2].value
+                                            address: this.state.fields[2].value,
+                                            city: this.state.fields[3].value,
+                                            state: this.state.fields[4].value,
+                                            zip: this.state.fields[5].value,
+                                            region: this.state.fields[6].value
                                         }}
                                         onSubmit={() => {}}
                                     >
@@ -235,24 +251,101 @@ class Validation extends Component {
                                                     <Label>
                                                         {
                                                             messages[
-                                                                "forms.password"
+                                                                "site.address"
                                                             ]
                                                         }
                                                     </Label>
                                                     <Field
                                                         className="form-control"
-                                                        name="password"
+                                                        name="address"
                                                         validate={
-                                                            this
-                                                                .validatePassword
+                                                            this.validateText
                                                         }
                                                     />
-                                                    {errors.password &&
-                                                        touched.password && (
+                                                    {errors.address &&
+                                                        touched.address && (
                                                             <div className="invalid-feedback d-block">
-                                                                {
-                                                                    errors.password
-                                                                }
+                                                                {errors.address}
+                                                            </div>
+                                                        )}
+                                                </FormGroup>
+
+                                                <FormGroup>
+                                                    <Label>
+                                                        {messages["site.city"]}
+                                                    </Label>
+                                                    <Field
+                                                        className="form-control"
+                                                        name="city"
+                                                        validate={
+                                                            this.validateText
+                                                        }
+                                                    />
+                                                    {errors.city &&
+                                                        touched.city && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {errors.city}
+                                                            </div>
+                                                        )}
+                                                </FormGroup>
+
+                                                <FormGroup>
+                                                    <Label>
+                                                        {messages["site.state"]}
+                                                    </Label>
+                                                    <Field
+                                                        className="form-control"
+                                                        name="state"
+                                                        validate={
+                                                            this.validateText
+                                                        }
+                                                    />
+                                                    {errors.state &&
+                                                        touched.state && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {errors.state}
+                                                            </div>
+                                                        )}
+                                                </FormGroup>
+
+                                                <FormGroup>
+                                                    <Label>
+                                                        {messages["site.zip"]}
+                                                    </Label>
+                                                    <Field
+                                                        className="form-control"
+                                                        name="zip"
+                                                        validate={
+                                                            this.validateText
+                                                        }
+                                                    />
+                                                    {errors.zip &&
+                                                        touched.zip && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {errors.zip}
+                                                            </div>
+                                                        )}
+                                                </FormGroup>
+
+                                                <FormGroup>
+                                                    <Label>
+                                                        {
+                                                            messages[
+                                                                "site.region"
+                                                            ]
+                                                        }
+                                                    </Label>
+                                                    <Field
+                                                        className="form-control"
+                                                        name="region"
+                                                        validate={
+                                                            this.validateText
+                                                        }
+                                                    />
+                                                    {errors.region &&
+                                                        touched.region && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {errors.region}
                                                             </div>
                                                         )}
                                                 </FormGroup>
@@ -261,7 +354,7 @@ class Validation extends Component {
                                     </Formik>
                                 </div>
                             </Step>
-                            <Step id="step4" hideTopNav={true}>
+                            <Step id="step3" hideTopNav={true}>
                                 <div className="wizard-basic-step text-center pt-3">
                                     {this.state.loading ? (
                                         <div>
@@ -302,4 +395,4 @@ class Validation extends Component {
         );
     }
 }
-export default injectIntl(Validation);
+export default injectIntl(AddNewSiteWizard);
