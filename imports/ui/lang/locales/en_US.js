@@ -680,5 +680,7 @@ module.exports = {
     "site.latitude": "Site Latitude",
     "site.longitude": "Site Longitude",
 
-    "site.fetching-data": "Fetching site data..."
+    "site.fetching-data": "Fetching site data...",
+    "site.registered": "The site registration completed successfully!",
+    "site.continue-add": "Continue to add site"
 };

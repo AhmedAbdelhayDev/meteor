@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Card, CardBody, FormGroup, Label, Spinner } from "reactstrap";
+import { Button } from "reactstrap";
 import IntlMessages from "../../helpers/IntlMessages";
 import { Wizard, Steps, Step } from "react-albus";
 import { injectIntl } from "react-intl";
@@ -16,10 +17,15 @@ class AddNewSiteWizard extends Component {
         this.onClickNext = this.onClickNext.bind(this);
         this.onClickPrev = this.onClickPrev.bind(this);
         this.validateText = this.validateText.bind(this);
+        this.continueAdd = this.continueAdd.bind(this);
+        // this.onWizardNext = this.onWizardNext.bind(this);
 
         this.form0 = React.createRef();
         this.form1 = React.createRef();
         this.form2 = React.createRef();
+
+        this.bottomNavigation = React.createRef();
+        this.mywizard = React.createRef();
 
         this.state = {
             bottomNavHidden: false,
@@ -115,6 +121,10 @@ class AddNewSiteWizard extends Component {
         this.setState({ bottomNavHidden: true, topNavDisabled: true });
     }
 
+    showNavigation() {
+        this.setState({ bottomNavHidden: false, topNavDisabled: false });
+    }
+
     onClickNext(goToNext, steps, step) {
         if (steps.length - 1 <= steps.indexOf(step)) {
             return;
@@ -153,12 +163,32 @@ class AddNewSiteWizard extends Component {
         goToPrev();
     }
 
+    continueAdd() {
+        //this.bottomNavigation.current.goToFirstStep();
+        debugger;
+        const { steps, step } = this.mywizard.current.state;
+        // this.mywizard.current.push(steps.findIndex(({ id }) => id === "step1"));
+        this.mywizard.current.push("step1");
+        // this.mywizard.current.go(0);
+
+        this.showNavigation();
+    }
+
+    // onWizardNext = wizard => {
+    //     debugger;
+    //     // this.mywizard = wizard;
+    //     // const { steps, step, push } = wizard;
+    //     // wizard.push(steps.findIndex(({ id }) => id === 0));
+    // };
+
     render() {
         const { messages } = this.props.intl;
+        const { isContinue } = this.state;
+
         return (
             <Card>
                 <CardBody className="wizard wizard-default">
-                    <Wizard>
+                    <Wizard ref={this.mywizard}>
                         <TopNavigation
                             className="justify-content-center"
                             disableNav={true}
@@ -370,14 +400,24 @@ class AddNewSiteWizard extends Component {
                                                 <IntlMessages id="wizard.content-thanks" />
                                             </h2>
                                             <p>
-                                                <IntlMessages id="wizard.registered" />
+                                                <IntlMessages id="site.registered" />
                                             </p>
+                                            <div className="mt-4">
+                                                <Button
+                                                    color="primary"
+                                                    className="mb-2"
+                                                    onClick={this.continueAdd}
+                                                >
+                                                    <IntlMessages id="site.continue-add" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                             </Step>
                         </Steps>
                         <BottomNavigation
+                            ref={this.bottomNavigation}
                             onClickNext={this.onClickNext}
                             onClickPrev={this.onClickPrev}
                             className={
