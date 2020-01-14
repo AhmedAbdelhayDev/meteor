@@ -678,5 +678,7 @@ module.exports = {
     "site.zip": "Site Zip",
     "site.region": "Site Region",
     "site.latitude": "Site Latitude",
-    "site.longitude": "Site Longitude"
+    "site.longitude": "Site Longitude",
+
+    "site.fetching-data": "Fetching site data..."
 };

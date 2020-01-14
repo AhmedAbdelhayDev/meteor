@@ -29,37 +29,37 @@ class AddNewSiteWizard extends Component {
                 {
                     valid: false,
                     name: "name",
-                    value: ""
+                    value: "Test"
                 },
                 {
                     valid: false,
                     name: "antenna",
-                    value: ""
+                    value: "Antenna"
                 },
                 {
                     valid: false,
                     name: "address",
-                    value: ""
+                    value: "151%20Battle%20Green%20Dr"
                 },
                 {
                     valid: false,
                     name: "city",
-                    value: ""
+                    value: "Rochester"
                 },
                 {
                     valid: false,
                     name: "state",
-                    value: ""
+                    value: "NY"
                 },
                 {
                     valid: false,
                     name: "zip",
-                    value: ""
+                    value: "14624"
                 },
                 {
                     valid: false,
                     name: "region",
-                    value: ""
+                    value: "NE"
                 }
             ]
         };
@@ -93,23 +93,20 @@ class AddNewSiteWizard extends Component {
 
     asyncLoading() {
         this.props.getSiteData({
+            site_name: this.state.fields[0],
+            antenna: this.state.fields[1],
             street_address: this.state.fields[2].value,
             city: this.state.fields[3].value,
             state: this.state.fields[4].value,
-            zip_code: this.state.fields[5].value
+            zip_code: this.state.fields[5].value,
+            region: this.state.fields[6].value
         });
-        // this.setState({ loading: true });
-        // setTimeout(() => {
-        //     this.setState({ loading: false });
-        // }, 3000);
     }
 
     validateText(value) {
         let error;
         if (!value) {
             error = "Please enter value";
-        } else if (value.length < 2) {
-            error = "Value must be longer than 2 characters";
         }
         return error;
     }
@@ -364,7 +361,7 @@ class AddNewSiteWizard extends Component {
                                                 className="mb-1"
                                             />
                                             <p>
-                                                <IntlMessages id="wizard.async" />
+                                                <IntlMessages id="site.fetching-data" />
                                             </p>
                                         </div>
                                     ) : (
