@@ -16,8 +16,12 @@ const SiteViewerPage = React.lazy(() =>
   import(/* webpackChunkName: "newsite" */ './siteviewer')
 );
 
-const FileManager = React.lazy(() =>
-  import(/* webpackChunkName: "newsite" */ './filemanager')
+const FileViewerPage = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './fileviewer')
+);
+
+const FileUploadPage = React.lazy(() =>
+  import(/* webpackChunkName: "newsite" */ './fileupload')
 );
 
 const Notifications = React.lazy(() =>
@@ -55,8 +59,12 @@ class App extends Component {
                 render={props => <SiteViewerPage {...props} />}
               />
               <Route
-                path={`${match.url}/filemanager`}
-                render={props => <FileManager {...props} />}
+                path={`${match.url}/fileviewer`}
+                render={props => <FileViewerPage {...props} />}
+              />
+              <Route
+                path={`${match.url}/fileupload`}
+                render={props => <FileUploadPage {...props} />}
               />
               <Route
                 path={`${match.url}/notifications`}
