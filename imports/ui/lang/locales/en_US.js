@@ -666,4 +666,18 @@ module.exports = {
    "wizard.registered": "Your registration completed successfully!",
    "wizard.async": "Async save for 3 seconds!"
 
+    /* 1.13.2020. Add New Site */
+    "wizard.step-newsite-name-1": "Step 1",
+    "wizard.step-newsite-desc-1": "Site Name",
+    "wizard.step-newsite-name-2": "Step 2",
+    "wizard.step-newsite-desc-2": "Site Address",
+    "site.name": "Site Name",
+    "site.antenna": "Site Antenna Structure Registration",
+    "site.address": "Site Address",
+    "site.city": "Site City",
+    "site.state": "Site State",
+    "site.zip": "Site Zip",
+    "site.region": "Site Region",
+    "site.latitude": "Site Latitude",
+    "site.longitude": "Site Longitude"
 };
