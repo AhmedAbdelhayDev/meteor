@@ -448,9 +448,12 @@ class Sidebar extends Component {
                                       {sub.subs.map((thirdSub, thirdIndex) => {
                                         return (
                                           <NavItem
-                                            key={`${
-                                              item.id
-                                            }_${index}_${thirdIndex}`}
+                                            key={`${item.id}_${index}_${thirdIndex}`}
+                                            className={`${
+                                              sub.subs && sub.subs.length > 0
+                                                ? 'has-sub-item'
+                                                : ''
+                                            }`}
                                           >
                                             {thirdSub.newWindow ? (
                                               <a
@@ -459,16 +462,137 @@ class Sidebar extends Component {
                                                 target="_blank"
                                               >
                                                 <i className={thirdSub.icon} />{' '}
-                                                <IntlMessages
-                                                  id={thirdSub.label}
-                                                />
+                                                <IntlMessages id={thirdSub.label} />
                                               </a>
+                                            ) : thirdSub.subs && thirdSub.subs.length > 0 ? (
+                                              <Fragment>
+                                                <NavLink
+                                                  className={`rotate-arrow-icon opacity-50 ${
+                                                    collapsedMenus.indexOf(
+                                                      `${item.id}_${index}_${thirdIndex}`
+                                                    ) === -1
+                                                      ? ''
+                                                      : 'collapsed'
+                                                  }`}
+                                                  to={thirdSub.to}
+                                                  id={`${item.id}_${index}_${thirdIndex}`}
+                                                  onClick={e =>
+                                                    this.toggleMenuCollapse(
+                                                      e,
+                                                      `${item.id}_${index}_${thirdIndex}`
+                                                    )
+                                                  }
+                                                >
+                                                  <i className="simple-icon-arrow-down" />{' '}
+                                                  <IntlMessages id={thirdSub.label} />
+                                                </NavLink>
+              
+                                                <Collapse
+                                                  isOpen={
+                                                    collapsedMenus.indexOf(
+                                                      `${item.id}_${index}_${thirdIndex}`
+                                                    ) === -1
+                                                  }
+                                                >
+                                                  <Nav className="third-level-menu">
+                                                    {thirdSub.subs.map((forthSub, forthIndex) => {
+                                                      return (
+                                                        <NavItem
+                                                          key={`${item.id}_${index}_${thirdIndex}_${forthIndex}`}
+                                                          className={`${
+                                                            sub.subs && sub.subs.length > 0
+                                                              ? 'has-sub-item'
+                                                              : ''
+                                                          }`}
+                                                        >
+                                                          {forthSub.newWindow ? (
+                                                            <a
+                                                              href={forthSub.to}
+                                                              rel="noopener noreferrer"
+                                                              target="_blank"
+                                                            >
+                                                              <i className={forthSub.icon} />{' '}
+                                                              <IntlMessages id={forthSub.label} />
+                                                            </a>
+                                                          ) : forthSub.subs && forthSub.subs.length > 0 ? (
+                                                            <Fragment>
+                                                              <NavLink
+                                                                className={`rotate-arrow-icon opacity-50 ${
+                                                                  collapsedMenus.indexOf(
+                                                                    `${item.id}_${index}_${thirdIndex}_${forthIndex}`
+                                                                  ) === -1
+                                                                    ? ''
+                                                                    : 'collapsed'
+                                                                }`}
+                                                                to={forthSub.to}
+                                                                id={`${item.id}_${index}_${thirdIndex}_${forthIndex}`}
+                                                                onClick={e =>
+                                                                  this.toggleMenuCollapse(
+                                                                    e,
+                                                                    `${item.id}_${index}_${thirdIndex}_${forthIndex}`
+                                                                  )
+                                                                }
+                                                              >
+                                                                <i className="simple-icon-arrow-down" />{' '}
+                                                                <IntlMessages id={forthSub.label} />
+                                                              </NavLink>
+                            
+                                                              <Collapse
+                                                                isOpen={
+                                                                  collapsedMenus.indexOf(
+                                                                    `${item.id}_${index}_${thirdIndex}_${forthIndex}`
+                                                                  ) === -1
+                                                                }
+                                                              >
+                                                                <Nav className="third-level-menu">
+                                                                  {forthSub.subs.map((fifthSub, fifthIndex) => {
+                                                                    return (
+                                                                      <NavItem
+                                                                        key={`${
+                                                                          item.id
+                                                                        }_${index}_${thirdIndex}_${forthIndex}_${fifthIndex}`}
+                                                                      >
+                                                                        {fifthSub.newWindow ? (
+                                                                          <a
+                                                                            href={fifthSub.to}
+                                                                            rel="noopener noreferrer"
+                                                                            target="_blank"
+                                                                          >
+                                                                            <i className={fifthSub.icon} />{' '}
+                                                                            <IntlMessages
+                                                                              id={fifthSub.label}
+                                                                            />
+                                                                          </a>
+                                                                        ) : (
+                                                                          <NavLink to={fifthSub.to}>
+                                                                            <i className={fifthSub.icon} />{' '}
+                                                                            <IntlMessages
+                                                                              id={fifthSub.label}
+                                                                            />
+                                                                          </NavLink>
+                                                                        )}
+                                                                      </NavItem>
+                                                                    );
+                                                                  })}
+                                                                </Nav>
+                                                              </Collapse>
+                                                            </Fragment>
+                                                          ) : (
+                                                            <NavLink to={forthSub.to}>
+                                                              <i className={forthSub.icon} />{' '}
+                                                              <IntlMessages id={forthSub.label} />
+                                                            </NavLink>
+                                                          )}
+                                                        </NavItem>
+                                                      );
+                                                    })}
+                                                  </Nav>
+                                                </Collapse>
+                                              </Fragment>
                                             ) : (
                                               <NavLink to={thirdSub.to}>
                                                 <i className={thirdSub.icon} />{' '}
-                                                <IntlMessages
-                                                  id={thirdSub.label}
-                                                />
+                                                <IntlMessages id={thirdSub.label} />
                                               </NavLink>
                                             )}
                                           </NavItem>
