@@ -7,13 +7,15 @@ import { BottomNavigation } from "../../components/wizard/BottomNavigation";
 import { TopNavigation } from "../../components/wizard/TopNavigation";
 import { Formik, Form, Field } from "formik";
 
+import { getSiteData } from "../../redux/newsite/actions";
+import { connect } from "react-redux";
+
 class AddNewSiteWizard extends Component {
     constructor(props) {
         super(props);
         this.onClickNext = this.onClickNext.bind(this);
         this.onClickPrev = this.onClickPrev.bind(this);
         this.validateText = this.validateText.bind(this);
-        this.validatePassword = this.validatePassword.bind(this);
 
         this.form0 = React.createRef();
         this.form1 = React.createRef();
@@ -63,26 +65,43 @@ class AddNewSiteWizard extends Component {
         };
     }
 
+    static getDerivedStateFromProps(props, state) {
+        return { loading: props.newsiteState.loading };
+    }
+
     componentDidMount() {
         this.setState({
             ...this.state.fields,
             forms: [
                 {
                     form: this.form0,
-                    fields: [this.state.fields[0], this.state.fields[1]]
+                    fields: [this.state.fields[0], this.state.fields[1]] //site name, site antenna structure registration
                 },
                 {
                     form: this.form1,
                     fields: [
-                        this.state.fields[2],
-                        this.state.fields[3],
-                        this.state.fields[4],
-                        this.state.fields[5],
-                        this.state.fields[6]
+                        this.state.fields[2], //site addrss
+                        this.state.fields[3], //site city
+                        this.state.fields[4], //site state
+                        this.state.fields[5], //site zip
+                        this.state.fields[6] //site region
                     ]
                 }
             ]
         });
+    }
+
+    asyncLoading() {
+        this.props.getSiteData({
+            street_address: this.state.fields[2].value,
+            city: this.state.fields[3].value,
+            state: this.state.fields[4].value,
+            zip_code: this.state.fields[5].value
+        });
+        // this.setState({ loading: true });
+        // setTimeout(() => {
+        //     this.setState({ loading: false });
+        // }, 3000);
     }
 
     validateText(value) {
@@ -95,29 +114,11 @@ class AddNewSiteWizard extends Component {
         return error;
     }
 
-    validatePassword(value) {
-        let error;
-        if (!value) {
-            error = "Please enter your password";
-        } else if (value.length < 6) {
-            error = "Password must be longer than 6 characters";
-        }
-        return error;
-    }
-
     hideNavigation() {
         this.setState({ bottomNavHidden: true, topNavDisabled: true });
     }
 
-    asyncLoading() {
-        this.setState({ loading: true });
-        setTimeout(() => {
-            this.setState({ loading: false });
-        }, 3000);
-    }
-
     onClickNext(goToNext, steps, step) {
-        debugger;
         if (steps.length - 1 <= steps.indexOf(step)) {
             return;
         }
@@ -395,4 +396,15 @@ class AddNewSiteWizard extends Component {
         );
     }
 }
-export default injectIntl(AddNewSiteWizard);
+
+const mapStateToProps = ({ newsiteReducer }) => {
+    return {
+        newsiteState: newsiteReducer
+    };
+};
+
+export default injectIntl(
+    connect(mapStateToProps, {
+        getSiteData
+    })(AddNewSiteWizard)
+);
