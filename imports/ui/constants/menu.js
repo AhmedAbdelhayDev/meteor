@@ -23,17 +23,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/northeast/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/northeast/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/northeast/california/riverside/topsite",
                   }
                 ]
@@ -49,17 +49,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/northwest/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/northwest/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/northwest/california/riverside/topsite",
                   }
                 ]
@@ -75,17 +75,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/southeast/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/southeast/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/southeast/california/riverside/topsite",
                   }
                 ]
@@ -101,17 +101,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/southwest/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/southwest/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/southwest/california/riverside/topsite",
                   }
                 ]
@@ -127,17 +127,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/south/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/south/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/south/california/riverside/topsite",
                   }
                 ]
@@ -153,17 +153,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/north/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/north/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/north/california/riverside/topsite",
                   }
                 ]
@@ -179,17 +179,17 @@ const data = [{
         subs: [
           {
             id: "california",
-            label: "menu.california",
+            label: "menu.state",
             to: "/app/siteviewer/island/california",            
             subs: [
               {
                 id: "riverside",
-                label: "menu.riverside",
+                label: "menu.city",
                 to: "/app/siteviewer/island/california/riverside",          
                 subs: [
                   {
                     id: "topsite",
-                    label: "menu.topsite",
+                    label: "menu.siteid",
                     to: "/app/siteviewer/island/california/riverside/topsite",
                   }
                 ]
@@ -201,10 +201,102 @@ const data = [{
     ]
   },
   {
-    id: "filemanager",
+    id: "fileviewer",
+    icon: "iconsminds-files",
+    label: "menu.fileviewer",
+    to: "/app/fileviewer"
+  },
+  {
+    id: "fileupload",
     icon: "simple-icon-cloud-upload",
-    label: "menu.filemanager",
-    to: "/app/filemanager"
+    label: "menu.fileupload",
+    to: "/app/fileupload",
+    subs: [
+      {
+        id: "northeast",
+        label: "menu.northeast",
+        to: "/app/fileupload/northeast",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/northeast/california"
+          }
+        ]
+      },
+      {
+        id: "northwest",
+        label: "menu.northwest",
+        to: "/app/fileupload/northwest",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/northwest/california"
+          }
+        ]
+      },
+      {
+        id: "southeast",
+        label: "menu.southeast",
+        to: "/app/fileupload/southeast",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/southeast/california"
+          }
+        ]
+      },
+      {
+        id: "southwest",
+        label: "menu.southwest",
+        to: "/app/fileupload/southwest",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/southwest/california"
+          }
+        ]
+      },
+      {
+        id: "south",
+        label: "menu.south",
+        to: "/app/fileupload/south",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/south/california"
+          }
+        ]
+      },
+      {
+        id: "north",
+        label: "menu.north",
+        to: "/app/fileupload/north",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/north/california"
+          }
+        ]
+      },
+      {
+        id: "island",
+        label: "menu.island",
+        to: "/app/fileupload/island",
+        subs: [
+          {
+            id: "california",
+            label: "menu.siteid",
+            to: "/app/fileupload/island/california"
+          }
+        ]
+      }
+    ]
   },
   {
     id: "notifications",
