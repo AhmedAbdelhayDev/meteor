@@ -3,7 +3,6 @@ import { ESTATED_API_ADDRESS, ESTATED_TOKEN } from "../../constants/define";
 import { all, call, fork, put, takeEvery } from "redux-saga/effects";
 
 function* getSiteData(action) {
-    debugger;
     try {
         const url =
             ESTATED_API_ADDRESS +
