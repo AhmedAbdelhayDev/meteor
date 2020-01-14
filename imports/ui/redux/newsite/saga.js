@@ -19,7 +19,8 @@ function* getSiteData(action) {
             action.payload.zip_code;
 
         const response = yield call(fetch, url);
-        const payload = yield response.json();
+        let payload = yield response.json();
+        payload = { ...payload, abbr: action.payload };
 
         yield put({ type: SITE_GOT_DATA, payload });
     } catch (error) {

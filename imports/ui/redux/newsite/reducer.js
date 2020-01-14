@@ -19,7 +19,7 @@ export default (state = INIT_STATE, action) => {
 
             if (resp.data !== null) {
                 const curDate = new Date();
-                //data, metadata, warnings, createdAt, updatedAt
+                //addr, data, metadata, warnings, createdAt, updatedAt
                 resp = {
                     ...resp,
                     ISLA_SITE_ID: generateUUID(),
