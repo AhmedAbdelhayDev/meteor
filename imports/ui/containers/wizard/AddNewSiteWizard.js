@@ -99,8 +99,9 @@ class AddNewSiteWizard extends Component {
 
     asyncLoading() {
         this.props.getSiteData({
-            site_name: this.state.fields[0],
-            antenna: this.state.fields[1],
+            owner_name: "Anastasia",
+            site_name: this.state.fields[0].value,
+            antenna: this.state.fields[1].value,
             street_address: this.state.fields[2].value,
             city: this.state.fields[3].value,
             state: this.state.fields[4].value,

@@ -1,0 +1,124 @@
+@media (max-width: 767px) and (min-width: 632px), (min-width: 1008px) {
+    .current-conditions-card .accordion-content .conditions-card {
+        margin-right: 2px;
+        height: 100%;
+    }
+}
+
+.current-conditions-card .accordion-content .panel {
+    margin-bottom: 2px;
+}
+
+.card {
+    -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .07);
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .07);
+}
+
+.conditions-card {
+    padding: 16px;
+    background: #fff;
+}
+
+@media (min-width: 768px) {
+    .conditions-card .title {
+        font-size: 16px;
+        line-height: 1.25;
+    }
+}
+
+.conditions-card .title {
+    font-size: 14px;
+    line-height: 1.43;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-weight: 500;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+    .module-header {
+        font-size: 16px;
+    }
+}
+
+.module-header {
+    color: #1f1f1f;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.module-header.sub {
+    color: #878787;
+}
+
+@media (min-width: 768px) {
+    .conditions-card .date {
+        font-size: 16px;
+    }
+}
+
+.conditions-card .date {
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@media (min-width: 768px) {
+    .module-header {
+        font-size: 16px;
+    }
+}
+
+.conditions-card .temp-icon-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.conditions-card .temp-icon-wrapper .icon {
+    margin-right: 24px;
+    height: 100px;
+    width: 100px;
+}
+
+.weather-icon {
+    height: 128px;
+    width: 128px;
+}
+
+@media (min-width: 1024px) {
+    .conditions-card .phrase {
+        margin-bottom: 0;
+    }
+}
+
+.conditions-card .phrase {
+    font-size: 14px;
+    line-height: 1.29;
+    min-height: 3.87em;
+    margin-bottom: 12px;
+}
+
+.conditions-card .temp-icon-wrapper .temperatures .realFeel.top {
+    margin-top: 0;
+    margin-bottom: 6px;
+}
+
+.conditions-card .temp-icon-wrapper .temperatures .realFeel {
+    font-size: 14px;
+    line-height: 1.25;
+    color: #878787;
+    margin-top: -5px;
+    margin-left: 5px;
+}
+
+.conditions-card .temp-icon-wrapper .temperatures .value {
+    font-size: 72px;
+    font-weight: 300;
+    position: relative;
+}

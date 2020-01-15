@@ -19,7 +19,7 @@ function* getSiteData(action) {
 
         const response = yield call(fetch, url);
         let payload = yield response.json();
-        payload = { ...payload, abbr: action.payload };
+        payload = { ...payload, abstract: action.payload };
 
         yield put({ type: SITE_GOT_DATA, payload });
     } catch (error) {
