@@ -18,6 +18,8 @@ import {
 
 import menuItems from '../../constants/menu';
 
+import Sites from '../../../api/sites';
+
 class Sidebar extends Component {
   constructor(props) {
     super(props);
@@ -26,6 +28,28 @@ class Sidebar extends Component {
       viewingParentMenu: '',
       collapsedMenus: []
     };
+
+    debugger;
+    const sortedSiteData = Sites.find(
+      {},
+      {
+          fields: {
+              "abstract.region": 1,
+              "abstract.state": 1,
+              "abstract.city": 1,
+              site_id: 1
+          }
+      },
+      {
+          sort: {
+              "abstract.region": 1,
+              "abstract.state": 1,
+              "abstract.city": 1,
+              site_id: 1
+          }
+      }
+  );
+  
   }
 
   handleWindowResize = event => {

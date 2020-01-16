@@ -685,5 +685,25 @@ module.exports = {
     "site.latitude": "Site Latitude",
     "site.longitude": "Site Longitude",
 
-    "site.fetching-data": "Fetching site data..."
+    "site.fetching-data": "Fetching site data...",
+    "site.registered": "The site registration completed successfully!",
+    "site.continue-add": "Continue to add site",
+
+    "site.data.owner.name": "Assessed owner name",
+    "site.data.owner.second_name": "Second assessed owner name",
+    "site.data.owner.formatted_street_address":
+        "The address where the current tax bill is mailed",
+    "site.data.owner.unit_type": "The unit type",
+    "site.data.owner.unit_number": "The unit number",
+    "site.data.owner.city": "The city where the current tax bill is mailed",
+    "site.data.owner.state": "The state abbreviation",
+    "site.data.owner.zip_code":
+        "The zip code where the current tax bill is mailed",
+    "site.data.owner.zip_plus_four_code": "Four digit postal zip extension",
+    "site.data.owner.owner_occupied": "Description of the owner occupancy",
+
+    "site.data.taxes.year": "The year the tax was levied",
+    "site.data.taxes.amount": "The amount of tax",
+    "site.data.taxes.exemptions": "List of exemptions",
+    "site.data.taxes.rate_code_area": "Tax jurisdictions"
 };

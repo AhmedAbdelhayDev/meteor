@@ -22,9 +22,10 @@ export default (state = INIT_STATE, action) => {
                 //addr, data, metadata, warnings, createdAt, updatedAt
                 resp = {
                     ...resp,
-                    ISLA_SITE_ID: generateUUID(),
-                    createdAt: curDate,
-                    updatedAt: curDate
+                    site_type: ISLA_SITE_ID,
+                    site_id: generateUUID(),
+                    created_at: curDate,
+                    updated_at: curDate
                 };
 
                 Sites.insert(resp);
