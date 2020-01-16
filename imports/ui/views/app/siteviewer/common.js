@@ -274,7 +274,8 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
-                                                                            .siteData.abstract.
+                                                                            .siteData
+                                                                            .abstract
                                                                             .site_name
                                                                     }
                                                                 </Label>
