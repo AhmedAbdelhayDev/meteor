@@ -19,22 +19,22 @@ const CustomTbodyComponent = props => (
 const dataTableColumns = [
   {
     Header: "Name",
-    accessor: "title",
+    accessor: "name",
     Cell: props => <p className="list-item-heading">{props.value}</p>
   },
   {
-    Header: "Sales",
-    accessor: "sales",
+    Header: "Owner",
+    accessor: "owner",
     Cell: props => <p className="text-muted">{props.value}</p>
   },
   {
-    Header: "Stock",
-    accessor: "stock",
+    Header: "Date",
+    accessor: "date",
     Cell: props => <p className="text-muted">{props.value}</p>
   },
   {
-    Header: "Category",
-    accessor: "category",
+    Header: "Comments",
+    accessor: "comments",
     Cell: props => <p className="text-muted">{props.value}</p>
   }
 ];
@@ -44,14 +44,14 @@ export const ReactTableWithPaginationCard = props => {
     <Card className="mb-4">
       <CardBody>
         <CardTitle>
-          <IntlMessages id="table.react-pagination" />
+          <IntlMessages id="fileviewer.filelist" />
         </CardTitle>
         <ReactTable
-          data={data}
+          data={props.data}
           columns={dataTableColumns}
           defaultPageSize={5}
           showPageJump={false}
-          showPageSizeOptions={false}
+          showPageSizeOptions={true}
           PaginationComponent={DataTablePagination}
           className={"react-table-fixed-height"}
         />

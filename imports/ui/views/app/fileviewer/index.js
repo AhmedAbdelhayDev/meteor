@@ -4,37 +4,19 @@ import {
   Card,
   CardTitle,
   CardBody,
-  Nav,
-  NavItem,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
-  TabContent,
-  TabPane,
-  Badge,
-  CardHeader,
-  Label,
-  Form,
-  FormGroup,
-  Input,
-  Button
 } from "reactstrap";
-import { NavLink } from "react-router-dom";
-import classnames from "classnames";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { Separator, Colxx } from "../../../components/common/CustomBootstrap";
 import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
-import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
-import { detailImages, detailThumbs } from "../../../data/carouselItems";
-import { detailsQuestionsData } from "../../../data/questions";
-import CommentWithLikes from "../../../components/pages/CommentWithLikes";
-import { commentWithLikesData } from "../../../data/comments";
-import QuestionAnswer from "../../../components/pages/QuestionAnswer";
-import GalleryDetail from "../../../containers/pages/GalleryDetail";
 
-import TagsInputExample from "../../../containers/forms/TagsInputExample";
+import { ReactTableWithPaginationCard } from "../../../containers/ui/ReactTableCards";
+
+import files from "../../../data/files";
 
 import {
     withScriptjs,
@@ -42,6 +24,20 @@ import {
     GoogleMap,
     Marker
 } from "react-google-maps";
+
+
+import axios from "axios";
+
+import { servicePath } from "../../../constants/defaultValues";
+
+import DataListView from "../../../containers/pages/DataListView";
+import Pagination from "../../../containers/pages/Pagination";
+import ContextMenuContainer from "../../../containers/pages/ContextMenuContainer";
+
+function collect(props) {
+  return { data: props.data };
+}
+const apiUrl = servicePath + "/cakes/paging";
 
 const MapWithAMarker = withScriptjs(
     withGoogleMap(props => (
@@ -54,23 +50,201 @@ const MapWithAMarker = withScriptjs(
 class FileViewerPage extends Component {
   constructor(props) {
     super(props);
-    this.toggleTab = this.toggleTab.bind(this);
+
     this.state = {
-      activeFirstTab: "1",
+      selectedPageSize: 10,
+      orderOptions: [
+        { column: "title", label: "Product Name" },
+        { column: "category", label: "Category" },
+        { column: "status", label: "Status" }
+      ],
+      pageSizes: [10, 20, 30, 50, 100],
+
+      categories: [
+        { label: "Cakes", value: "Cakes", key: 0 },
+        { label: "Cupcakes", value: "Cupcakes", key: 1 },
+        { label: "Desserts", value: "Desserts", key: 2 }
+      ],
+
+      selectedOrderOption: { column: "title", label: "Product Name" },
+      dropdownSplitOpen: false,
+      modalOpen: false,
+      currentPage: 1,
+      totalItemCount: 0,
+      totalPage: 1,
+      search: "",
+      selectedItems: [],
+      lastChecked: null,
+      isLoading: false
     };
   }
 
-  toggleTab(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeFirstTab: tab
-      });
-    }
+  componentDidMount() {
+    this.dataListRender();
   }
 
+  toggleModal = () => {
+    this.setState({
+      modalOpen: !this.state.modalOpen
+    });
+  };
+
+  changeOrderBy = column => {
+    this.setState(
+      {
+        selectedOrderOption: this.state.orderOptions.find(
+          x => x.column === column
+        )
+      },
+      () => this.dataListRender()
+    );
+  };
+  changePageSize = size => {
+    this.setState(
+      {
+        selectedPageSize: size,
+        currentPage: 1
+      },
+      () => this.dataListRender()
+    );
+  };
+  onChangePage = page => {
+    this.setState(
+      {
+        currentPage: page
+      },
+      () => this.dataListRender()
+    );
+  };
+
+  onSearchKey = e => {
+    if (e.key === "Enter") {
+      this.setState(
+        {
+          search: e.target.value.toLowerCase()
+        },
+        () => this.dataListRender()
+      );
+    }
+  };
+
+  onCheckItem = (event, id) => {
+    if (
+      event.target.tagName === "A" ||
+      (event.target.parentElement && event.target.parentElement.tagName === "A")
+    ) {
+      return true;
+    }
+    if (this.state.lastChecked === null) {
+      this.setState({
+        lastChecked: id
+      });
+    }
+
+    let selectedItems = this.state.selectedItems;
+    if (selectedItems.includes(id)) {
+      selectedItems = selectedItems.filter(x => x !== id);
+    } else {
+      selectedItems.pop();
+      selectedItems.push(id);
+    }
+    this.setState({
+      selectedItems
+    });
+
+    if (event.shiftKey) {
+      var items = this.state.items;
+      var start = this.getIndex(id, items, "id");
+      var end = this.getIndex(this.state.lastChecked, items, "id");
+      items = items.slice(Math.min(start, end), Math.max(start, end) + 1);
+      selectedItems.pop();
+      selectedItems.push(
+        ...items.map(item => {
+          return item.id;
+        })
+      );
+      selectedItems = Array.from(new Set(selectedItems));
+      this.setState({
+        selectedItems
+      });
+    }
+    document.activeElement.blur();
+  };
+
+  getIndex(value, arr, prop) {
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i][prop] === value) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  handleChangeSelectAll = isToggle => {
+    if (this.state.selectedItems.length >= this.state.items.length) {
+      if (isToggle) {
+        this.setState({
+          selectedItems: []
+        });
+      }
+    } else {
+      this.setState({
+        selectedItems: this.state.items.map(x => x.id)
+      });
+    }
+    document.activeElement.blur();
+    return false;
+  };
+
+  dataListRender() {
+    const {
+      selectedPageSize,
+      currentPage,
+      selectedOrderOption,
+      search
+    } = this.state;
+    axios
+      .get(
+        `${apiUrl}?pageSize=${selectedPageSize}&currentPage=${currentPage}&orderBy=${
+          selectedOrderOption.column
+        }&search=${search}`
+      )
+      .then(res => {
+        return res.data;
+      })
+      .then(data => {
+        this.setState({
+          totalPage: data.totalPage,
+          items: data.data,
+          selectedItems: [],
+          totalItemCount: data.totalItem,
+          isLoading: true
+        });
+      });
+  }
+
+  onContextMenuClick = (e, data, target) => {
+    console.log(
+      "onContextMenuClick - selected items",
+      this.state.selectedItems
+    );
+    console.log("onContextMenuClick - action : ", data.action);
+  };
+
+  onContextMenu = (e, data) => {
+    const clickedProductId = data.data;
+    if (!this.state.selectedItems.includes(clickedProductId)) {
+      this.setState({
+        selectedItems: [clickedProductId]
+      });
+    }
+
+    return true;
+  };
+
   render() {
-    const { messages } = this.props.intl;
-    return (
+    return !this.state.isLoading ? (
+      <div className="loading" />
+    ) : (
       <Fragment>
         <Row>
           <Colxx xxs="12">
@@ -111,7 +285,7 @@ class FileViewerPage extends Component {
                 <Card className="mb-4">
                     <CardBody>
                         <CardTitle>
-                        <IntlMessages id="maps.google" />
+                          <IntlMessages id="maps.google" />
                         </CardTitle>
                         <MapWithAMarker
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCO8MfadmlotuuHC8wmjwL_46I5QAMIiRU&v=3.exp&libraries=geometry,drawing,places"
@@ -120,55 +294,45 @@ class FileViewerPage extends Component {
                         mapElement={<div className="map-item" />}/>
                     </CardBody>
                 </Card>
-                <Card className="mb-4">
-                  <CardHeader>
-                    <Nav tabs className="card-header-tabs ">
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: this.state.activeFirstTab === "1",
-                            "nav-link": true
-                          })}
-                          onClick={() => { this.toggleTab("1"); }} to="#" location={{}} >
-                          <IntlMessages id="pages.general-title" />
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: this.state.activeFirstTab === "2",
-                            "nav-link": true
-                          })}
-                          onClick={() => { this.toggleTab("2"); }} to="#" location={{}} >
-                          <IntlMessages id="pages.property-title" />
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </CardHeader>
-                </Card>
-
+                <ReactTableWithPaginationCard data={files}/>
               </Colxx>
 
               <Colxx xxs="12" xl="4" className="col-right">
-                <Card className="mb-4">
-                  <CardBody>
-                    <p className="mb-3">
-                      Vivamus ultricies augue vitae commodo condimentum. Nullam faucibus eros eu mauris feugiat, eget consectetur tortor tempus.
-                      <br /><br />
-                      Sed volutpat mollis dui eget fringilla. Vestibulum blandit urna ut tellus lobortis tristique. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque quis cursus mauris.
-                      <br /><br />
-                      Nulla non purus fermentum, pulvinar dui condimentum, malesuada nibh. Sed viverra quam urna, at condimentum ante viverra non. Mauris posuere erat sapien, a convallis libero lobortis sit amet. Suspendisse in orci tellus.
-                    </p>
-                    <p className="text-muted text-small mb-2">{messages["forms.tags"]}</p>
-                    <p className="mb-3">
-                      <Badge color="outline-secondary" className="mb-1 mr-1" pill>FRONTEND</Badge>
-                      <Badge color="outline-secondary" className="mb-1 mr-1" pill>JAVASCRIPT</Badge>
-                      <Badge color="outline-secondary" className="mb-1 mr-1" pill>SECURITY</Badge>
-                      <Badge color="outline-secondary" className="mb-1 mr-1" pill>DESIGN</Badge>
-                    </p>
-                    <TagsInputExample/>
-                  </CardBody>
-                </Card>
+                <Fragment>
+                  <div className="disable-text-selection">
+                    <Row>
+                      <Colxx xxs="12">
+                        <div className="mb-2">
+                          <h5>
+                            <IntlMessages id="fileviewer.sitelist" />
+                          </h5>
+                        </div>
+                      </Colxx>
+                    </Row>
+                    <Row>
+                      {this.state.items.map(product => {
+                        return (
+                          <DataListView
+                            key={product.id}
+                            product={product}
+                            isSelect={this.state.selectedItems.includes(product.id)}
+                            onCheckItem={this.onCheckItem}
+                            collect={collect}
+                          />
+                        );
+                      })}{" "}
+                      <Pagination
+                        currentPage={this.state.currentPage}
+                        totalPage={this.state.totalPage}
+                        onChangePage={i => this.onChangePage(i)}
+                      />
+                      <ContextMenuContainer
+                        onContextMenuClick={this.onContextMenuClick}
+                        onContextMenu={this.onContextMenu}
+                      />
+                    </Row>
+                  </div>
+                </Fragment>
               </Colxx>
             </Row>
           </Colxx>
