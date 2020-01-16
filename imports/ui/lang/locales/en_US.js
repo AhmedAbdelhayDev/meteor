@@ -639,6 +639,7 @@ module.exports = {
     "maps.yandex": "Yandex",
 
     "fileviewer.filelist": "File List",
+    "fileviewer.sitelist": "Site List",
 
     /* 07.20.Tables */
     "table.bootstrap-tables": "Bootstrap Tables",
