@@ -266,6 +266,25 @@ class CommonPage extends Component {
                                                                     sm={2}
                                                                     className="font-weight-bold"
                                                                 >
+                                                                    Site Name
+                                                                </Label>
+                                                                <Label
+                                                                    id="siteId"
+                                                                    sm={10}
+                                                                >
+                                                                    {
+                                                                        this
+                                                                            .siteData.abstract.
+                                                                            .site_name
+                                                                    }
+                                                                </Label>
+                                                            </FormGroup>
+                                                            <FormGroup row>
+                                                                <Label
+                                                                    for="siteId"
+                                                                    sm={2}
+                                                                    className="font-weight-bold"
+                                                                >
                                                                     Site ID
                                                                 </Label>
                                                                 <Label
@@ -294,8 +313,9 @@ class CommonPage extends Component {
                                                                     {
                                                                         this
                                                                             .siteData
-                                                                            .abstract
-                                                                            .owner_name
+                                                                            .data
+                                                                            .owner
+                                                                            .name
                                                                     }
                                                                 </Label>
                                                             </FormGroup>

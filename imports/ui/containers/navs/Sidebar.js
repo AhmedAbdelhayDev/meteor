@@ -76,8 +76,8 @@ class Sidebar extends Component {
       subMenuDic[doc.abstract.region].subs[doc.abstract.state].subs[doc.abstract.city].subs = subMenuDic[doc.abstract.region].subs[doc.abstract.state].subs[doc.abstract.city].subs.concat({
         icon: null,
         id: doc.site_id,
-        label: doc.site_id,
-        to: "/app/siteviewer/" + doc.abstract.region + "/" +  + doc.abstract.state + "/" + doc.abstract.city + "/" + doc.site_id,
+        label: doc.abstract.site_name,
+        to: "/app/siteviewer/" + doc.abstract.region + "/" +  doc.abstract.state + "/" + doc.abstract.city + "/" + doc.site_id,
       });
     });
 
@@ -865,10 +865,11 @@ let trackedSidebar = withTracker(() => {
     sites: Sites.find(
       {},
       {
-          fields: {
+          fields: {              
               "abstract.region": 1,
               "abstract.state": 1,
               "abstract.city": 1,
+              "abstract.site_name": 1,
               site_id: 1
           }
       },
@@ -877,6 +878,7 @@ let trackedSidebar = withTracker(() => {
               "abstract.region": 1,
               "abstract.state": 1,
               "abstract.city": 1,
+              "abstract.site_name": 1,
               site_id: 1
           }
       }
