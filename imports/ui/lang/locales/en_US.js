@@ -638,6 +638,8 @@ module.exports = {
     "maps.google": "Google",
     "maps.yandex": "Yandex",
 
+    "fileviewer.filelist": "File List",
+
     /* 07.20.Tables */
     "table.bootstrap-tables": "Bootstrap Tables",
     "table.bootstrap-basic": "Basic Table",
