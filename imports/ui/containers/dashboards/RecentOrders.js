@@ -4,7 +4,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { Card, CardBody, CardTitle, Badge } from "reactstrap";
 
 import IntlMessages from "../../helpers/IntlMessages";
-import data from "../../data/products";
+import data from "../../data/buildings";
 
 export default function RecentOrders() {
   return (
@@ -33,6 +33,8 @@ export default function RecentOrders() {
                       src={order.img}
                       alt={order.title}
                       className="list-thumbnail border-0"
+                      width="113.33"
+                      height="85"
                     />
                     <Badge
                       key={index}

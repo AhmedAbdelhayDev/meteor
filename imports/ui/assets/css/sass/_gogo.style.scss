@@ -2907,7 +2907,7 @@ main {
   max-width: unset;
   height: 85px;
   object-fit: cover;
-  width: unset !important;
+  // width: unset !important;
 
   @include respond-below(md) {
     height: 80px;
