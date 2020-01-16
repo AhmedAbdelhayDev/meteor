@@ -7,6 +7,7 @@ import chatApp from "./chat/reducer";
 import surveyListApp from "./surveyList/reducer";
 import surveyDetailApp from "./surveyDetail/reducer";
 import newsiteReducer from "./newsite/reducer";
+import accuweatherReducer from "./accuweather/reducer";
 
 const reducers = combineReducers({
     menu,
@@ -16,7 +17,8 @@ const reducers = combineReducers({
     chatApp,
     surveyListApp,
     surveyDetailApp,
-    newsiteReducer
+    newsiteReducer,
+    accuweatherReducer
 });
 
 export default reducers;
