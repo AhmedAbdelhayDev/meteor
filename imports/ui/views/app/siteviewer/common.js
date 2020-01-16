@@ -69,17 +69,36 @@ class CommonPage extends Component {
         super(props);
         this.toggleTab = this.toggleTab.bind(this);
         this.state = {
-            activeFirstTab: "1"
+            activeFirstTab: "1",
+            siteData: null
         };
+    }
 
-        // let data = Sites.find({}).fetch();
-        this.siteData = Sites.findOne();
+    static getDerivedStateFromProps(props, state) {
+        debugger;
+
+        const pathname = props.location.pathname;
+        const patharr = pathname.split("/");
+        const site_id = patharr[patharr.length - 1];
+
+        let siteData = Sites.findOne({ site_id: site_id });
+        if (
+            siteData &&
+            (state.siteData === null ||
+                state.siteData.site_id !== siteData.site_id)
+        ) {
+            props.getSiteWeather({
+                postal_code: siteData.abstract.zip_code
+            });
+
+            return { siteData };
+        }
+
+        return null;
     }
 
     componentDidMount() {
-        this.props.getSiteWeather({
-            postal_code: this.siteData.abstract.zip_code
-        });
+        console.log("&****************************");
     }
 
     toggleTab(tab) {
@@ -91,7 +110,7 @@ class CommonPage extends Component {
     }
 
     render() {
-        if (this.siteData === null) {
+        if (this.state.siteData === null) {
             return <div>Please insert new site.</div>;
         }
 
@@ -274,6 +293,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .abstract
                                                                             .site_name
@@ -294,6 +314,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .site_id
                                                                     }
@@ -313,6 +334,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .owner
@@ -336,6 +358,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .address
@@ -357,6 +380,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .address
@@ -378,6 +402,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .address
@@ -399,6 +424,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .address
@@ -421,6 +447,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .address
@@ -456,6 +483,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -479,6 +507,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -504,6 +533,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -529,6 +559,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -553,6 +584,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -577,6 +609,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -599,6 +632,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -621,6 +655,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -643,6 +678,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -666,6 +702,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -688,6 +725,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -714,6 +752,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -736,6 +775,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -758,6 +798,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -780,6 +821,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -802,6 +844,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -827,6 +870,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -851,6 +895,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -876,6 +921,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -898,6 +944,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -923,6 +970,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .parcel
@@ -956,6 +1004,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -982,6 +1031,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1005,6 +1055,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1027,6 +1078,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1050,6 +1102,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1073,6 +1126,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1097,6 +1151,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1120,6 +1175,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1145,6 +1201,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1166,6 +1223,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1189,6 +1247,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1211,6 +1270,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1235,6 +1295,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1259,6 +1320,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1282,6 +1344,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1306,6 +1369,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1328,6 +1392,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1351,6 +1416,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1374,6 +1440,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1397,6 +1464,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1419,6 +1487,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1442,6 +1511,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1466,6 +1536,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1488,6 +1559,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1512,6 +1584,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1537,6 +1610,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1559,6 +1633,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1582,6 +1657,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1604,6 +1680,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1626,6 +1703,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1648,6 +1726,7 @@ class CommonPage extends Component {
                                                                 >
                                                                     {
                                                                         this
+                                                                            .state
                                                                             .siteData
                                                                             .data
                                                                             .structure
@@ -1666,7 +1745,8 @@ class CommonPage extends Component {
                                                     <CardBody>
                                                         <Form>
                                                             {Object.entries(
-                                                                this.siteData
+                                                                this.state
+                                                                    .siteData
                                                                     .data.owner
                                                             ).map(
                                                                 ([
@@ -1718,7 +1798,7 @@ class CommonPage extends Component {
                                                 <Colxx sm="12">
                                                     <CardBody>
                                                         <Form>
-                                                            {this.siteData.data.taxes.map(
+                                                            {this.state.siteData.data.taxes.map(
                                                                 item => {
                                                                     return Object.entries(
                                                                         item

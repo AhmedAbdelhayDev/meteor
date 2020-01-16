@@ -38,9 +38,6 @@ class Sidebar extends Component {
 
       const sortedSiteData = props.sites;
     
-    debugger;
-
-
     let subMenuDic = {};
     sortedSiteData.map(doc => {
       if( !subMenuDic[doc.abstract.region] )
