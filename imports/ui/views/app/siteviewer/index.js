@@ -2,27 +2,27 @@ import React, { Suspense } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import CommonPage from "./common";
 
-// const NortheastPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './northeast')
-// );
-// const NorthwestPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './northwest')
-// );
-// const SoutheastPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './southeast')
-// );
-// const SouthwestPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './southwest')
-// );
-// const SouthPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './south')
-// );
-// const NorthPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './north')
-// );
-// const IslandPage = React.lazy(() =>
-//   import(/* webpackChunkName: "pages-blog" */ './island')
-// );
+const NortheastPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./northeast")
+);
+const NorthwestPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./northwest")
+);
+const SoutheastPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./southeast")
+);
+const SouthwestPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./southwest")
+);
+const SouthPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./south")
+);
+const NorthPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./north")
+);
+const IslandPage = React.lazy(() =>
+    import(/* webpackChunkName: "pages-blog" */ "./island")
+);
 
 const SiteViewerPage = ({ match }) => (
     <Suspense fallback={<div className="loading" />}>
