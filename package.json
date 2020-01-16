@@ -8,6 +8,9 @@
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
         "visualize": "meteor --production --extra-packages bundle-visualizer"
     },
+    "engines": {
+        "node": "13.0.1"
+    },
     "dependencies": {
         "@babel/runtime": "^7.7.6",
         "@glidejs/glide": "^3.3.0",
