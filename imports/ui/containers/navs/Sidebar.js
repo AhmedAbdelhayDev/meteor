@@ -108,7 +108,78 @@ class Sidebar extends Component {
         subMenuArray = subMenuArray.concat(region);
       }
     );
-    /////////////////////
+    /* File Menu */
+    let fileSubMenuDic = {};
+    sortedSiteData.map(doc => {
+      if( !fileSubMenuDic[doc.abstract.region] )
+      {
+        fileSubMenuDic[doc.abstract.region] = {
+          id: doc.abstract.region,
+          label: "menu.region." + doc.abstract.region,
+          to: "/app/fileupload/" + doc.abstract.region,
+          subs: {}
+        }
+      }
+
+      const fileSubMenuRegion = fileSubMenuDic[doc.abstract.region].subs;
+      if( !fileSubMenuRegion[doc.abstract.state]) {
+        fileSubMenuDic[doc.abstract.region].subs[doc.abstract.state] = {
+          id: doc.abstract.state,
+          label: doc.abstract.state,  //"menu.state."
+          to: "/app/fileupload/" + doc.abstract.region + "/" +  + doc.abstract.state,
+          subs: {}
+        }
+      }
+
+      const fileSubMenuCity = fileSubMenuDic[doc.abstract.region].subs[doc.abstract.state].subs;
+      if( !fileSubMenuCity[doc.abstract.city] ){
+        fileSubMenuDic[doc.abstract.region].subs[doc.abstract.state].subs[doc.abstract.city] = {
+          id: doc.abstract.city,
+          label: doc.abstract.city,
+          to: "/app/fileupload/" + doc.abstract.region + "/" +  + doc.abstract.state + "/" + doc.abstract.city,
+          subs: []
+        }
+      }
+
+      fileSubMenuDic[doc.abstract.region].subs[doc.abstract.state].subs[doc.abstract.city].subs = fileSubMenuDic[doc.abstract.region].subs[doc.abstract.state].subs[doc.abstract.city].subs.concat({
+        icon: null,
+        id: doc.site_id,
+        label: doc.abstract.site_name,
+        to: "/app/fileupload/" + doc.abstract.region + "/" +  doc.abstract.state + "/" + doc.abstract.city + "/" + doc.site_id,
+      });
+    });
+
+    //Convert dictionary to arry
+    //subs
+    let fileSubMenuArray = [];
+    Object.entries(
+      fileSubMenuDic
+    ).map(
+      ([
+          key,
+          value
+      ]) => {    
+        
+        //region.subs (state)
+        let stateArr = [];
+        Object.entries(value.subs).map(([key, value]) => {
+          //region.state.subs (city)
+          let cityArr = [];
+          Object.entries(value.subs).map(([key, value]) => {
+            cityArr = cityArr.concat(value);
+          });
+
+          let state = value;
+          state.subs = cityArr;
+          stateArr = stateArr.concat(state);
+        });
+
+        let region = value;
+        region.subs = stateArr;
+        fileSubMenuArray = fileSubMenuArray.concat(region);
+      }
+    );
+    /*************/
 
     const newMenuItems = [
       {
@@ -141,92 +212,7 @@ class Sidebar extends Component {
           icon: "simple-icon-cloud-upload",
           label: "menu.fileupload",
           to: "/app/fileupload",
-          subs: [
-              {
-                  id: "northeast",
-                  label: "menu.northeast",
-                  to: "/app/fileupload/northeast",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/northeast/california"
-                      }
-                  ]
-              },
-              {
-                  id: "northwest",
-                  label: "menu.northwest",
-                  to: "/app/fileupload/northwest",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/northwest/california"
-                      }
-                  ]
-              },
-              {
-                  id: "southeast",
-                  label: "menu.southeast",
-                  to: "/app/fileupload/southeast",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/southeast/california"
-                      }
-                  ]
-              },
-              {
-                  id: "southwest",
-                  label: "menu.southwest",
-                  to: "/app/fileupload/southwest",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/southwest/california"
-                      }
-                  ]
-              },
-              {
-                  id: "south",
-                  label: "menu.south",
-                  to: "/app/fileupload/south",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/south/california"
-                      }
-                  ]
-              },
-              {
-                  id: "north",
-                  label: "menu.north",
-                  to: "/app/fileupload/north",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/north/california"
-                      }
-                  ]
-              },
-              {
-                  id: "island",
-                  label: "menu.island",
-                  to: "/app/fileupload/island",
-                  subs: [
-                      {
-                          id: "california",
-                          label: "menu.siteid",
-                          to: "/app/fileupload/island/california"
-                      }
-                  ]
-              }
-          ]
+          subs: fileSubMenuArray
       },
       {
           id: "notifications",
