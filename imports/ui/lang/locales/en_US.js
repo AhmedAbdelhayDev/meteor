@@ -159,6 +159,14 @@ module.exports = {
     "menu.validations": "Validations",
     "menu.wizard": "Wizard",
 
+    "menu.region.NE": "North East",
+    "menu.region.NW": "North West",
+    "menu.region.SE": "South East",
+    "menu.region.SW": "South West",
+    "menu.region.S": "South",
+    "menu.region.N": "North",
+    "menu.region.ISLAND": "Island",
+
     /* 04.Dashboards */
     "dashboards.pending-orders": "Pending Orders",
     "dashboards.completed-orders": "Completed Orders",
