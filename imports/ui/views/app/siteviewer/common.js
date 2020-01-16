@@ -38,6 +38,7 @@ import TagsInputExample from "../../../containers/forms/TagsInputExample";
 
 import "../../../assets/css/weather.css";
 import { getSiteWeather } from "../../../redux/accuweather/actions";
+import { ConvertEpochToDateFormat } from "../../../constants/define";
 import { connect } from "react-redux";
 
 //Offline Testing
@@ -71,7 +72,6 @@ class CommonPage extends Component {
             activeFirstTab: "1"
         };
 
-        debugger;
         // let data = Sites.find({}).fetch();
         this.siteData = Sites.findOne();
     }
@@ -95,40 +95,41 @@ class CommonPage extends Component {
             return <div>Please insert new site.</div>;
         }
 
+        let weatherDateTime = "";
+        let weatherTemperature = "";
+        let weatherIconSrc = "";
+
+        if (this.props.weatherData.data) {
+            weatherIconSrc =
+                "https://www.accuweather.com/images/weathericons/" +
+                this.props.weatherData.data.WeatherIcon +
+                ".svg";
+
+            const dateTime = ConvertEpochToDateFormat(
+                this.props.weatherData.data.EpochTime
+            );
+            weatherDateTime =
+                dateTime.month +
+                "/" +
+                dateTime.day +
+                " " +
+                dateTime.ampmhours +
+                ":" +
+                dateTime.minutes +
+                " " +
+                dateTime.ampm;
+
+            weatherTemperature = Math.round(
+                this.props.weatherData.data.Temperature.Metric.Value
+            );
+        }
+
         const { messages } = this.props.intl;
         return (
             <Fragment>
                 <Row>
                     <Colxx xxs="12">
                         <h1>California</h1>
-                        <div className="text-zero top-right-button-container">
-                            <UncontrolledDropdown>
-                                <DropdownToggle
-                                    caret
-                                    color="primary"
-                                    size="lg"
-                                    outline
-                                    className="top-right-button top-right-button-single"
-                                >
-                                    <IntlMessages id="pages.actions" />
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem header>
-                                        <IntlMessages id="pages.header" />
-                                    </DropdownItem>
-                                    <DropdownItem disabled>
-                                        <IntlMessages id="pages.delete" />
-                                    </DropdownItem>
-                                    <DropdownItem>
-                                        <IntlMessages id="pages.another-action" />
-                                    </DropdownItem>
-                                    <DropdownItem divider />
-                                    <DropdownItem>
-                                        <IntlMessages id="pages.another-action" />
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </div>
 
                         <Breadcrumb match={this.props.match} />
                         <Separator className="mb-5" />
@@ -1754,36 +1755,42 @@ class CommonPage extends Component {
                             <Colxx xxs="12" xl="4" className="col-right">
                                 <Card className="mb-4">
                                     <CardBody>
-                                        {this.props.weatherData && (
-                                            <div class="conditions-card card panel conditions-card">
-                                                <p class="module-header title">
+                                        {this.props.weatherData.data && (
+                                            <div className="conditions-card card panel conditions-card">
+                                                <p className="module-header title">
                                                     Current Weather
-                                                    <span class="temp-unit">
+                                                    <span className="temp-unit">
                                                         °C
                                                     </span>
                                                 </p>
-                                                <p class="module-header sub date">
-                                                    11:43 AM
+                                                <p className="module-header sub date">
+                                                    {weatherDateTime}
                                                 </p>
-                                                <div class="temp-icon-wrapper">
+                                                <div className="temp-icon-wrapper">
                                                     <img
-                                                        class="weather-icon icon"
-                                                        data-src="https://www.accuweather.com/images/weathericons/1.svg"
+                                                        className="weather-icon icon"
+                                                        data-src={
+                                                            weatherIconSrc
+                                                        }
                                                         width="128px"
                                                         height="128px"
                                                         data-eager=""
-                                                        src="https://www.accuweather.com/images/weathericons/1.svg"
+                                                        src={weatherIconSrc}
                                                     />
 
-                                                    <div class="temperatures">
-                                                        <p class="value mb-5">
-                                                            5°
-                                                            <span class="hi-lo-label"></span>
+                                                    <div className="temperatures">
+                                                        <p className="value mb-5">
+                                                            {weatherTemperature}
+                                                            °
+                                                            <span className="hi-lo-label"></span>
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div class="phrase">
-                                                    Partly sunny
+                                                <div className="phrase">
+                                                    {
+                                                        this.props.weatherData
+                                                            .data.WeatherText
+                                                    }
                                                 </div>
                                             </div>
                                         )}

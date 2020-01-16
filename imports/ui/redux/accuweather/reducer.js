@@ -6,7 +6,7 @@ import {
 
 const INIT_STATE = {
     loading: false,
-    site_data: null,
+    data: null,
     error: ""
 };
 
@@ -17,9 +17,9 @@ export default (state = INIT_STATE, action) => {
             return { ...state, loading: true };
 
         case SITE_GOT_WEATHER:
-            const weatherData = action.payload;
+            const data = action.payload;
 
-            return { ...state, loading: false, weatherData, error: null }; //success
+            return { ...state, loading: false, data, error: null }; //success
 
         //continue to send error
         case SITE_GET_WEATHER_ERROR_LOCKEY:
