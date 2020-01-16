@@ -75,8 +75,6 @@ class CommonPage extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        debugger;
-
         const pathname = props.location.pathname;
         const patharr = pathname.split("/");
         const site_id = patharr[patharr.length - 1];
@@ -95,10 +93,6 @@ class CommonPage extends Component {
         }
 
         return null;
-    }
-
-    componentDidMount() {
-        console.log("&****************************");
     }
 
     toggleTab(tab) {
