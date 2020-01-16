@@ -142,7 +142,7 @@ class CommonPage extends Component {
             <Fragment>
                 <Row>
                     <Colxx xxs="12">
-                        <h1>California</h1>
+                        <h1>{this.state.siteData.abstract.site_name}</h1>
 
                         <Breadcrumb match={this.props.match} />
                         <Separator className="mb-5" />
