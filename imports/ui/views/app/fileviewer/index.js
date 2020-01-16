@@ -4,37 +4,21 @@ import {
   Card,
   CardTitle,
   CardBody,
-  Nav,
-  NavItem,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
-  TabContent,
-  TabPane,
-  Badge,
-  CardHeader,
-  Label,
-  Form,
-  FormGroup,
-  Input,
-  Button
+  Badge
 } from "reactstrap";
-import { NavLink } from "react-router-dom";
-import classnames from "classnames";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { Separator, Colxx } from "../../../components/common/CustomBootstrap";
 import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
-import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
-import { detailImages, detailThumbs } from "../../../data/carouselItems";
-import { detailsQuestionsData } from "../../../data/questions";
-import CommentWithLikes from "../../../components/pages/CommentWithLikes";
-import { commentWithLikesData } from "../../../data/comments";
-import QuestionAnswer from "../../../components/pages/QuestionAnswer";
-import GalleryDetail from "../../../containers/pages/GalleryDetail";
 
 import TagsInputExample from "../../../containers/forms/TagsInputExample";
+import { ReactTableWithPaginationCard } from "../../../containers/ui/ReactTableCards";
+
+import files from "../../../data/files";
 
 import {
     withScriptjs,
@@ -111,7 +95,7 @@ class FileViewerPage extends Component {
                 <Card className="mb-4">
                     <CardBody>
                         <CardTitle>
-                        <IntlMessages id="maps.google" />
+                          <IntlMessages id="maps.google" />
                         </CardTitle>
                         <MapWithAMarker
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCO8MfadmlotuuHC8wmjwL_46I5QAMIiRU&v=3.exp&libraries=geometry,drawing,places"
@@ -120,33 +104,7 @@ class FileViewerPage extends Component {
                         mapElement={<div className="map-item" />}/>
                     </CardBody>
                 </Card>
-                <Card className="mb-4">
-                  <CardHeader>
-                    <Nav tabs className="card-header-tabs ">
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: this.state.activeFirstTab === "1",
-                            "nav-link": true
-                          })}
-                          onClick={() => { this.toggleTab("1"); }} to="#" location={{}} >
-                          <IntlMessages id="pages.general-title" />
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: this.state.activeFirstTab === "2",
-                            "nav-link": true
-                          })}
-                          onClick={() => { this.toggleTab("2"); }} to="#" location={{}} >
-                          <IntlMessages id="pages.property-title" />
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </CardHeader>
-                </Card>
-
+                <ReactTableWithPaginationCard data={files}/>
               </Colxx>
 
               <Colxx xxs="12" xl="4" className="col-right">
