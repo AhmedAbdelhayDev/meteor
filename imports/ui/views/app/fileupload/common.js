@@ -5,6 +5,8 @@ import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import DropzoneExample from "../../../containers/forms/DropzoneExample";
 
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
+
 import Sites from "../../../../api/sites";
 
 export default class CommonPage extends Component {
