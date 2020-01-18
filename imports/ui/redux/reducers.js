@@ -8,6 +8,7 @@ import surveyListApp from "./surveyList/reducer";
 import surveyDetailApp from "./surveyDetail/reducer";
 import newsiteReducer from "./newsite/reducer";
 import accuweatherReducer from "./accuweather/reducer";
+import azureReducer from "./azureblob/reducer";
 
 const reducers = combineReducers({
     menu,
@@ -18,7 +19,8 @@ const reducers = combineReducers({
     surveyListApp,
     surveyDetailApp,
     newsiteReducer,
-    accuweatherReducer
+    accuweatherReducer,
+    azureReducer
 });
 
 export default reducers;

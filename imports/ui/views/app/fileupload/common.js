@@ -8,19 +8,34 @@ import DropzoneExample from "../../../containers/forms/DropzoneExample";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 
 import Sites from "../../../../api/sites";
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
 
-export default class CommonPage extends Component {
+class CommonPage extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            pathname: null,
+            blobServiceClient: false
+        };
     }
 
     static getDerivedStateFromProps(props, state) {
         const pathname = props.location.pathname;
         const patharr = pathname.split("/");
-        if (patharr.length > 1) {
+        if (state.pathname !== pathname && patharr.length > 1) {
             const site_id = patharr[patharr.length - 1];
             let siteData = Sites.findOne({ site_id: site_id });
-            return { siteData };
+            return { siteData, pathname };
+        }
+
+        if (
+            state.blobServiceClient === false &&
+            props.blobServiceClient !== null
+        ) {
+            debugger;
+            console.log("blobServiceClient Created Successfully.");
+            return { blobServiceClient: true };
         }
 
         return null;
@@ -52,3 +67,11 @@ export default class CommonPage extends Component {
         );
     }
 }
+
+const mapStateToProps = ({ azureReducer }) => {
+    return {
+        azureState: azureReducer
+    };
+};
+
+export default injectIntl(connect(mapStateToProps)(CommonPage));
