@@ -132,9 +132,10 @@ class CommonPage extends Component {
                 " " +
                 dateTime.ampm;
 
-            weatherTemperature = Math.round(
-                this.props.weatherData.data.Temperature.Metric.Value
-            );
+            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;            
+            // weatherTemperature = Math.round(
+            //     this.props.weatherData.data.Temperature.Imperial.Value
+            // );
         }
 
         const { messages } = this.props.intl;
@@ -1855,7 +1856,7 @@ class CommonPage extends Component {
                                                 <p className="module-header title">
                                                     Current Weather
                                                     <span className="temp-unit">
-                                                        °C
+                                                        °F
                                                     </span>
                                                 </p>
                                                 <p className="module-header sub date">
@@ -1889,7 +1890,7 @@ class CommonPage extends Component {
                                                 </div>
                                             </div>
                                         )}
-                                        <p className="text-muted text-small mb-2">
+                                        {/* <p className="text-muted text-small mb-2">
                                             {messages["forms.tags"]}
                                         </p>
                                         <p className="mb-3">
@@ -1922,7 +1923,7 @@ class CommonPage extends Component {
                                                 DESIGN
                                             </Badge>
                                         </p>
-                                        <TagsInputExample />
+                                        <TagsInputExample /> */}
                                     </CardBody>
                                 </Card>
                             </Colxx>
