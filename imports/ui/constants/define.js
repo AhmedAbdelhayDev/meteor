@@ -12,6 +12,11 @@ export const ACCUWEATHER_CURRENT_API_ADDRESS =
     "http://dataservice.accuweather.com/currentconditions/v1/";
 export const ACCUWEATHER_API_KEY = "I6MwcKqGflK92rOvD5HxGL6in78jLCei";
 
+/* AZURE Blob */
+export const AZURE_ACCOUNT = "consilienceanalytics";
+export const AZURE_ACCOUNT_KEY =
+    "1mz5nmTf0ufgkYHpc1KFf+UHTIjxDpAHmIMpKxXmLILLx4jUn4osXfeeS+5arP0UquBU7EYe5ku8w1kEHIBYeA==";
+
 export function generateUUID() {
     const pattern = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
     return pattern.replace(/[xy]/g, c => {
@@ -106,6 +111,15 @@ export function ConvertEpochToDateFormat(unixtimestamp) {
 
 export function ConvertDateToEpoch(date) {
     // var myDate = new Date("July 1, 1978 02:30:00"); // Your timezone!
-    var myEpoch = date.getTime() / 1000.0;
+    var myEpoch = Math.round(date.getTime() / 1000.0);  //remove millisecond
     return myEpoch;
+}
+
+export function GetStandardDate(date) {
+    const epochtime = ConvertDateToEpoch(date);
+    const dataObj = ConvertEpochToDateFormat(epochtime);
+    const sday = ("0" + dataObj.day).substr(-2);
+    const smonth = ("0" + dataObj.month).substr(-2);
+    const result = `${sday}.${smonth}.${dataObj.year}`;
+    return result;
 }
