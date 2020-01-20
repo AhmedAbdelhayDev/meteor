@@ -14,7 +14,7 @@ import { Separator, Colxx } from "../../../components/common/CustomBootstrap";
 import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 
-import { ReactTableWithPaginationCard } from "../../../containers/ui/ReactTableCards";
+import { FileListTableWithPaginationCard } from "../../../containers/ui/FileListTableCards";
 
 import files from "../../../data/files";
 
@@ -33,6 +33,10 @@ import { servicePath } from "../../../constants/defaultValues";
 import DataListView from "../../../containers/pages/DataListView";
 import Pagination from "../../../containers/pages/Pagination";
 import ContextMenuContainer from "../../../containers/pages/ContextMenuContainer";
+
+import {GetStandardDate} from '../../../constants/define';
+import { withTracker } from 'meteor/react-meteor-data';
+import Sites from "/imports/api/sites";
 
 function collect(props) {
   return { data: props.data };
@@ -75,8 +79,23 @@ class FileViewerPage extends Component {
       search: "",
       selectedItems: [],
       lastChecked: null,
-      isLoading: false
+      isLoading: false,
+      siteCount: 0
     };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if(props.siteCount !== state.siteCount ) {
+      return {siteCount: props.siteCount}
+    }
+
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if( prevState.siteCount !== this.state.siteCount ) {
+      this.dataListRender();
+    }
   }
 
   componentDidMount() {
@@ -202,24 +221,85 @@ class FileViewerPage extends Component {
       selectedOrderOption,
       search
     } = this.state;
-    axios
-      .get(
-        `${apiUrl}?pageSize=${selectedPageSize}&currentPage=${currentPage}&orderBy=${
-          selectedOrderOption.column
-        }&search=${search}`
-      )
-      .then(res => {
-        return res.data;
-      })
-      .then(data => {
-        this.setState({
-          totalPage: data.totalPage,
-          items: data.data,
-          selectedItems: [],
-          totalItemCount: data.totalItem,
-          isLoading: true
-        });
+    // axios
+    //   .get(
+    //     `${apiUrl}?pageSize=${selectedPageSize}&currentPage=${currentPage}&orderBy=${
+    //       selectedOrderOption.column
+    //     }&search=${search}`
+    //   )
+    //   .then(res => {
+    //     return res.data;
+    //   })
+    //   .then(data => {
+    //     this.setState({
+    //       totalPage: data.totalPage,
+    //       items: data.data,
+    //       selectedItems: [],
+    //       totalItemCount: data.totalItem,
+    //       isLoading: true
+    //     });
+    //   });
+
+    debugger;
+
+    const sites = Sites.find(
+      {},
+      {
+          fields: {              
+              "abstract.region": 1,
+              "abstract.state": 1,
+              "abstract.city": 1,
+              "abstract.site_name": 1,
+              updated_at: 1,
+              site_id: 1
+          }
+      },
+      {
+          sort: {
+              "updated_at": -1
+          }
+      },
+      {
+          skip: selectedPageSize * (currentPage - 1),
+          limit: selectedPageSize
+      }
+    ).fetch();
+
+    const totalPage = Math.ceil(this.props.siteCount / selectedPageSize)
+
+    let data = {
+      status: true,
+      totalItem: this.props.siteCount,
+      totalPage: totalPage,
+      pageSize: selectedPageSize,
+      currentPage: currentPage
+    }
+
+    let innerData = [];
+    sites.map(site => {
+      innerData = innerData.concat({
+        id: site.site_id,
+        title: site.abstract.site_name,
+        // img: "/assets/img/02.jpg",
+        category: `${site.abstract.region}, ${site.abstract.state}, ${site.abstract.city}`,
+        // status: "PROCESSED",
+        // statusColor: "secondary",
+        // description: "Site description",
+        // sales: 574
+        // stock: 16
+        date: GetStandardDate(site.updated_at)
       });
+    });
+
+    data = {...data, data: innerData};
+
+    this.setState({
+      totalPage: data.totalPage,
+      items: data.data,
+      selectedItems: [],
+      totalItemCount: data.totalItem,
+      isLoading: true
+    });
   }
 
   onContextMenuClick = (e, data, target) => {
@@ -242,6 +322,7 @@ class FileViewerPage extends Component {
   };
 
   render() {
+    
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
@@ -294,7 +375,7 @@ class FileViewerPage extends Component {
                         mapElement={<div className="map-item" />}/>
                     </CardBody>
                 </Card>
-                <ReactTableWithPaginationCard data={files}/>
+                <FileListTableWithPaginationCard data={files}/>
               </Colxx>
 
               <Colxx xxs="12" xl="4" className="col-right">
@@ -342,4 +423,27 @@ class FileViewerPage extends Component {
   }
 }
 
-export default injectIntl(FileViewerPage);
+let trackedFileViewerPage = withTracker(() => {
+  return {
+    siteCount: Sites.find().count()
+    // siteCount: Sites.find(
+    //   {},
+    //   {
+    //       fields: {              
+    //           "abstract.region": 1,
+    //           "abstract.state": 1,
+    //           "abstract.city": 1,
+    //           "abstract.site_name": 1,
+    //           site_id: 1
+    //       }
+    //   },
+    //   {
+    //       sort: {
+    //           "updated_at": -1
+    //       }
+    //   }
+    // ).count()
+  };
+})(FileViewerPage);
+
+export default injectIntl(trackedFileViewerPage);

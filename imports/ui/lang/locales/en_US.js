@@ -646,6 +646,7 @@ module.exports = {
     "maps.google": "Google",
     "maps.yandex": "Yandex",
 
+    /* File Viewer */
     "fileviewer.filelist": "File List",
     "fileviewer.sitelist": "Site List",
 
@@ -713,5 +714,10 @@ module.exports = {
     "site.data.taxes.year": "The year the tax was levied",
     "site.data.taxes.amount": "The amount of tax",
     "site.data.taxes.exemptions": "List of exemptions",
-    "site.data.taxes.rate_code_area": "Tax jurisdictions"
+    "site.data.taxes.rate_code_area": "Tax jurisdictions",
+
+    /* file upload */
+    "file.uploadfiles": "Upload Files",
+    "file.removeall": "Remove All",
+    "file.clear": "Clear"
 };

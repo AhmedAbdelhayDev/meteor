@@ -4,3 +4,5 @@ node_modules/
 # misc
 ~*
 package-lock.json
+.deploy/
+.vscode/

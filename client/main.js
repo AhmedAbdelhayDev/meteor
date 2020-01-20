@@ -4,3 +4,5 @@ import clientRender from '/imports/ui/index';
 Meteor.startup(() => {
   clientRender()
 });
+
+

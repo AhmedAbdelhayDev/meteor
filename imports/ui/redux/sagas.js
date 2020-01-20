@@ -6,7 +6,7 @@ import surveyListSagas from "./surveyList/saga";
 import surveyDetailSagas from "./surveyDetail/saga";
 import newsiteSagas from "./newsite/saga";
 import accuWeatherSagas from "./accuweather/saga";
-import azureSagas from "./azureblob";
+import azureSagas from "./azureblob/saga";
 
 export default function* rootSaga(getState) {
     yield all([

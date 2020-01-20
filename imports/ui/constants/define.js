@@ -111,6 +111,13 @@ export function ConvertEpochToDateFormat(unixtimestamp) {
 
 export function ConvertDateToEpoch(date) {
     // var myDate = new Date("July 1, 1978 02:30:00"); // Your timezone!
-    var myEpoch = date.getTime() / 1000.0;
+    var myEpoch = Math.round(date.getTime() / 1000.0);  //remove millisecond
     return myEpoch;
+}
+
+export function GetStandardDate(date) {
+    const epochtime = ConvertDateToEpoch(date);
+    const dataObj = ConvertEpochToDateFormat(epochtime);
+    const result = `${dataObj.day}.${dataObj.month}.${dataObj.year}`;
+    return result;
 }

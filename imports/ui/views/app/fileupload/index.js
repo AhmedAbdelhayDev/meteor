@@ -1,14 +1,147 @@
-import React, { Suspense } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import React, { Component, Fragment } from "react";
+import { Row, Card, CardBody, CardTitle, Button } from "reactstrap";
 
-import CommonPage from "./common";
+import IntlMessages from "../../../helpers/IntlMessages";
+import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import Dropzone from "../../../containers/forms/Dropzone";
 
-const FileUploadPage = ({ match }) => (
-    <Suspense fallback={<div className="loading" />}>
-        <Switch>
-            <Route render={props => <CommonPage {...props} />} />
-            <Redirect to="/error" />
-        </Switch>
-    </Suspense>
-);
-export default FileUploadPage;
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
+
+import Sites from "../../../../api/sites";
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+
+// import blobServiceClient from '../../../../api/azureblob';
+import {getContainerList} from '../../../redux/azureblob/actions';
+
+// import Azure from 'azure-storage';
+// import { StorageError, ServiceResponse } from 'azure-storage';
+// import { createBlobService, BlobService, createQueueService, QueueService } from 'azure-storage';
+
+
+// import AzureStorage from 'azure-storage';
+
+// import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
+// import { AZURE_ACCOUNT, AZURE_ACCOUNT_KEY } from '../../../constants/define';
+
+class FileUploadPage extends Component {
+    constructor(props) {
+        super(props);
+                
+        //CREATE blobServiceClient
+        // const sharedKeyCredential = new StorageSharedKeyCredential(
+        //     AZURE_ACCOUNT,
+        //     AZURE_ACCOUNT_KEY
+        // );
+        // const blobServiceClient = new BlobServiceClient(
+        //     `https://${AZURE_ACCOUNT}.blob.core.windows.net`,
+        //     sharedKeyCredential
+        // );
+
+        this.state = {
+            pathname: null,
+            siteData: null,
+            // blobServiceClient
+        };
+
+        this.uploadfiles = this.uploadfiles.bind(this);
+        this.clear = this.clear.bind(this);
+
+        // console.log("------------ 1 -----------");
+        // debugger;
+
+        // let blobService = AzureStorage.createBlobService();
+        // console.log(blobService);
+
+        // debugger;        
+        // let blobService = azure.createBlobService();
+        // blobService.createContainerIfNotExists('taskcontainer', 
+        //     {
+        //         publicAccessLevel: 'blob'
+        //     }, function(error, result, response) {
+        //         if (!error) {
+        //             // if result = true, container was created.
+        //             // if result = false, container already existed.
+        //         }
+        //     }
+        // );
+
+        // console.log("------------ 2 -----------");
+
+        // this.props.getContainerList();
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        const pathname = props.location.pathname;
+        const patharr = pathname.split("/");
+        if (state.pathname !== pathname && patharr.length > 1) {
+            const site_id = patharr[patharr.length - 1];
+            let siteData = Sites.findOne({ site_id: site_id });
+            return { siteData, pathname };
+        }
+
+        return null;
+    }
+
+    uploadfiles(ev) {
+        if( ev ) {
+            const info = {
+                region: this.state.siteData.abstract.region,
+                site_id: this.state.siteData.site_id
+            }
+            
+            this.dropzone.uploadfiles(info);
+        }
+    }
+
+    clear(ev) {
+        this.dropzone.clear();
+    }
+
+    render() {
+        if( !this.state.siteData ) {
+            return null;
+        }
+
+        return (
+            <Fragment>
+                <Row className="mb-4">
+                    <Colxx xxs="12">                        
+                        <h1>{this.state.siteData.abstract.site_name}</h1>
+
+                        <Breadcrumb match={this.props.match} />
+                        <Separator className="mb-5" />
+
+                        <Card>
+                            <CardBody>
+                                <CardTitle>
+                                    <IntlMessages id="menu.fileupload" />
+                                </CardTitle>
+                                <Dropzone
+                                    ref={node => (this.dropzone = node)}
+                                />
+                                <div className="text-center mt-4">
+                                    <Button color="primary" className="mr-4" onClick={this.uploadfiles}>
+                                        <IntlMessages id="file.uploadfiles" />
+                                    </Button>
+
+                                    <Button color="danger" onClick={this.clear}>
+                                        <IntlMessages id="file.clear" />
+                                    </Button>
+                                </div>
+                            </CardBody>
+                        </Card>
+                    </Colxx>
+                </Row>
+            </Fragment>
+        );
+    }
+};
+
+const mapStateToProps = ({ azureReducer }) => {
+    return {
+        azureState: azureReducer
+    };
+};
+
+export default injectIntl(connect(mapStateToProps, {getContainerList})(FileUploadPage));
