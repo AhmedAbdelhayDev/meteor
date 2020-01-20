@@ -118,6 +118,8 @@ export function ConvertDateToEpoch(date) {
 export function GetStandardDate(date) {
     const epochtime = ConvertDateToEpoch(date);
     const dataObj = ConvertEpochToDateFormat(epochtime);
-    const result = `${dataObj.day}.${dataObj.month}.${dataObj.year}`;
+    const sday = ("0" + dataObj.day).substr(-2);
+    const smonth = ("0" + dataObj.month).substr(-2);
+    const result = `${sday}.${smonth}.${dataObj.year}`;
     return result;
 }

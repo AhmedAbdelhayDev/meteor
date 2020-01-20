@@ -28,7 +28,7 @@ import {
 
 import axios from "axios";
 
-import { servicePath } from "../../../constants/defaultValues";
+import { servicePath, themeRadiusStorageKey } from "../../../constants/defaultValues";
 
 import DataListView from "../../../containers/pages/DataListView";
 import Pagination from "../../../containers/pages/Pagination";
@@ -37,6 +37,9 @@ import ContextMenuContainer from "../../../containers/pages/ContextMenuContainer
 import {GetStandardDate} from '../../../constants/define';
 import { withTracker } from 'meteor/react-meteor-data';
 import Sites from "/imports/api/sites";
+import Blobs from "/imports/api/blobs";
+
+import filesize from 'filesize';
 
 function collect(props) {
   return { data: props.data };
@@ -56,21 +59,8 @@ class FileViewerPage extends Component {
     super(props);
 
     this.state = {
-      selectedPageSize: 10,
-      orderOptions: [
-        { column: "title", label: "Product Name" },
-        { column: "category", label: "Category" },
-        { column: "status", label: "Status" }
-      ],
+      selectedPageSize: 10,      
       pageSizes: [10, 20, 30, 50, 100],
-
-      categories: [
-        { label: "Cakes", value: "Cakes", key: 0 },
-        { label: "Cupcakes", value: "Cupcakes", key: 1 },
-        { label: "Desserts", value: "Desserts", key: 2 }
-      ],
-
-      selectedOrderOption: { column: "title", label: "Product Name" },
       dropdownSplitOpen: false,
       modalOpen: false,
       currentPage: 1,
@@ -80,7 +70,8 @@ class FileViewerPage extends Component {
       selectedItems: [],
       lastChecked: null,
       isLoading: false,
-      siteCount: 0
+      siteCount: 0,
+      files: []
     };
   }
 
@@ -107,17 +98,7 @@ class FileViewerPage extends Component {
       modalOpen: !this.state.modalOpen
     });
   };
-
-  changeOrderBy = column => {
-    this.setState(
-      {
-        selectedOrderOption: this.state.orderOptions.find(
-          x => x.column === column
-        )
-      },
-      () => this.dataListRender()
-    );
-  };
+  
   changePageSize = size => {
     this.setState(
       {
@@ -171,22 +152,66 @@ class FileViewerPage extends Component {
       selectedItems
     });
 
-    if (event.shiftKey) {
-      var items = this.state.items;
-      var start = this.getIndex(id, items, "id");
-      var end = this.getIndex(this.state.lastChecked, items, "id");
-      items = items.slice(Math.min(start, end), Math.max(start, end) + 1);
-      selectedItems.pop();
-      selectedItems.push(
-        ...items.map(item => {
-          return item.id;
-        })
-      );
-      selectedItems = Array.from(new Set(selectedItems));
-      this.setState({
-        selectedItems
-      });
+    if( selectedItems.length === 1 ) {
+      const selectedSiteID = selectedItems[0];
+
+      const blobs = Blobs.find(
+          {site_id: selectedSiteID},
+          {
+              fields: {              
+                  file_name: 1,
+                  file_size: 1,
+                  user_name: 1,
+                  uploaded_date: 1,
+                  site_id: 1,
+                  _id: 1
+              }
+          },
+          {
+              sort: {
+                  uploaded_date: -1
+              }
+          }
+        ).fetch();
+
+          debugger;
+
+        let files = [];
+        blobs.map(blob => {
+          files = files.concat({
+            id: blob._id,
+            name: blob.file_name,
+            owner: blob.user_name,
+            size: filesize(blob.file_size),
+            date: GetStandardDate(blob.uploaded_date),
+            comments: blob.comments ? blob.comments : ""
+          });
+        });
+
+        this.setState({
+          files
+        });
     }
+
+
+
+    /** multi select */
+    // if (event.shiftKey) {
+    //   var items = this.state.items;
+    //   var start = this.getIndex(id, items, "id");
+    //   var end = this.getIndex(this.state.lastChecked, items, "id");
+    //   items = items.slice(Math.min(start, end), Math.max(start, end) + 1);
+    //   selectedItems.pop();
+    //   selectedItems.push(
+    //     ...items.map(item => {
+    //       return item.id;
+    //     })
+    //   );
+    //   selectedItems = Array.from(new Set(selectedItems));
+    //   this.setState({
+    //     selectedItems
+    //   });
+    // }
     document.activeElement.blur();
   };
 
@@ -198,27 +223,11 @@ class FileViewerPage extends Component {
     }
     return -1;
   }
-  handleChangeSelectAll = isToggle => {
-    if (this.state.selectedItems.length >= this.state.items.length) {
-      if (isToggle) {
-        this.setState({
-          selectedItems: []
-        });
-      }
-    } else {
-      this.setState({
-        selectedItems: this.state.items.map(x => x.id)
-      });
-    }
-    document.activeElement.blur();
-    return false;
-  };
-
+  
   dataListRender() {
     const {
       selectedPageSize,
       currentPage,
-      selectedOrderOption,
       search
     } = this.state;
     // axios
@@ -239,8 +248,6 @@ class FileViewerPage extends Component {
     //       isLoading: true
     //     });
     //   });
-
-    debugger;
 
     const sites = Sites.find(
       {},
@@ -375,7 +382,7 @@ class FileViewerPage extends Component {
                         mapElement={<div className="map-item" />}/>
                     </CardBody>
                 </Card>
-                <FileListTableWithPaginationCard data={files}/>
+                <FileListTableWithPaginationCard data={this.state.files}/>
               </Colxx>
 
               <Colxx xxs="12" xl="4" className="col-right">

@@ -11,10 +11,6 @@ function insertLink(title, url) {
 
 Meteor.startup(() => {
     
-    console.log("==========================\n");
-    console.log(blobServiceClient); 
-    console.log("**************************\n");   
-    
     // If the Links collection is empty, add some data.
     if (Links.find().count() === 0) {
         insertLink(
@@ -68,8 +64,8 @@ async function uploadFiles(files, info) {
     var userID = "Nastia";
     for await( const file of files ) {
         const content = file.dataURL;
-        const date = new Date().getTime();
-        const blobName = getMediaType(file.upload.filename) + "/" + date + "-" + userName + "-" + getRegFileName(file.upload.filename);
+        const date = new Date();
+        const blobName = getMediaType(file.upload.filename) + "/" + date.getTime() + "-" + userName + "-" + getRegFileName(file.upload.filename);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         const uploadBlobResponse = await blockBlobClient.upload(content, Buffer.byteLength(content));
         console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
@@ -86,6 +82,7 @@ async function uploadFiles(files, info) {
             container_name: containerName,
             blobl_name: blobName,
             uploaded_date: date,
+            comments: ''
         }
 
         Blobs.insert(addedFile);
@@ -115,7 +112,7 @@ Meteor.methods({
     'fileupload': function(files, info) {
         console.log("=====  received file ======\n");
         // console.log(files);
-        console.log("================================ \n");
+        //console.log("================================ \n");
 
         uploadFiles(files, info)
         .then(res => {

@@ -21,6 +21,7 @@
         "chart.js": "2.7.2",
         "classnames": "2.2.6",
         "es6-promisify": "^6.0.2",
+        "filesize": "^6.0.1",
         "firebase": "^7.4.0",
         "formik": "^1.5.1",
         "indexof": "0.0.1",

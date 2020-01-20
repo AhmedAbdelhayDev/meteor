@@ -16,6 +16,11 @@ const dataTableColumns = [
     Cell: props => <p className="text-muted">{props.value}</p>
   },
   {
+    Header: "Size",
+    accessor: "size",
+    Cell: props => <p className="text-muted">{props.value}</p>
+  },
+  {
     Header: "Date",
     accessor: "date",
     Cell: props => <p className="text-muted">{props.value}</p>
