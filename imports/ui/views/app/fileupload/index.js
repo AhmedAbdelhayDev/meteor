@@ -41,11 +41,16 @@ class FileUploadPage extends Component {
         this.state = {
             pathname: null,
             siteData: null,
+            uploadAvailable: false,
+            clearAvailable: false
             // blobServiceClient
         };
 
         this.uploadfiles = this.uploadfiles.bind(this);
         this.clear = this.clear.bind(this);
+        this.addedfile = this.addedfile.bind(this);
+        this.reset = this.reset.bind(this);
+        this.uploaded = this.uploaded.bind(this);
 
         // console.log("------------ 1 -----------");
         // debugger;
@@ -77,10 +82,40 @@ class FileUploadPage extends Component {
         if (state.pathname !== pathname && patharr.length > 1) {
             const site_id = patharr[patharr.length - 1];
             let siteData = Sites.findOne({ site_id: site_id });
+
             return { siteData, pathname };
         }
 
         return null;
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if( prevState.pathname !== this.state.pathname ) {
+            if( this.dropzone ) {
+                this.dropzone.clear();
+            }
+        }
+    }
+
+    uploaded() {
+        this.setState({
+            uploadAvailable: false,
+            clearAvailable: true
+        })
+    }
+
+    addedfile() {
+        this.setState({
+            uploadAvailable: true,
+            clearAvailable: true
+        })
+    }
+
+    reset() {
+        this.setState({
+            uploadAvailable: false,
+            clearAvailable: false
+        })
     }
 
     uploadfiles(ev) {
@@ -119,13 +154,16 @@ class FileUploadPage extends Component {
                                 </CardTitle>
                                 <Dropzone
                                     ref={node => (this.dropzone = node)}
+                                    addedfile = {this.addedfile}
+                                    reset = {this.reset}
+                                    uploaded = {this.uploaded}
                                 />
                                 <div className="text-center mt-4">
-                                    <Button color="primary" className="mr-4" onClick={this.uploadfiles}>
+                                    <Button color="primary" className="mr-4" onClick={this.uploadfiles} disabled={!this.state.uploadAvailable}>
                                         <IntlMessages id="file.uploadfiles" />
                                     </Button>
 
-                                    <Button color="danger" onClick={this.clear}>
+                                    <Button color="danger" onClick={this.clear} disabled={!this.state.clearAvailable}>
                                         <IntlMessages id="file.clear" />
                                     </Button>
                                 </div>

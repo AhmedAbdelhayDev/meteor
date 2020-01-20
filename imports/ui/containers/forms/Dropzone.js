@@ -65,8 +65,15 @@ export default class Dropzone extends Component {
   uploadfiles(info) {
     console.log("upload files");
     Meteor.call('fileupload', this.myDropzone.files, info, (err, res) => {
-      if (err) {
-        alert(err);
+      if (err) {        
+        NotificationManager.error(
+          err,
+          "Error",
+          5000,
+          null,
+          null,
+          ""  //className
+        );
       } else {
         // success!
         console.log( "file upload success!");
@@ -79,6 +86,8 @@ export default class Dropzone extends Component {
           null,
           ""  //className
         );
+
+        this.props.uploaded();
       }
     });
   }
@@ -95,6 +104,12 @@ export default class Dropzone extends Component {
         eventHandlers = {{
           init: (dropzone)=>{
             this.myDropzone = dropzone;
+          },
+          addedfile: () => {
+            this.props.addedfile();
+          },
+          reset: () => {
+            this.props.reset();
           }
         }}
       />

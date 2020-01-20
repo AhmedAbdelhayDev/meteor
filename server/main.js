@@ -54,7 +54,8 @@ async function uploadFiles(files, info) {
         const createContainerResponse = await containerClient.create();
         console.log(`Create container ${containerName} successfully`, createContainerResponse.requestId);
     }catch(error) {
-        console.log(`Create container ${containerName} failed. Maybe, Already created. `, error);
+        // console.log(`Create container ${containerName} failed. Maybe, Already created. `, error);
+        console.log(`Create container ${containerName} failed. Maybe, Already created. `);
     }
     
     var uploadedfiles = [];
@@ -113,6 +114,7 @@ Meteor.methods({
         console.log("=====  received file ======\n");
         // console.log(files);
         //console.log("================================ \n");
+        // throw new Meteor.Error('Uploading files failed.');
 
         uploadFiles(files, info)
         .then(res => {
@@ -120,8 +122,9 @@ Meteor.methods({
         })
         .catch((err) => {
             console.error("Error Upload Files:", err.message);
+            throw new Meteor.Error('Uploading files failed.');
             //return {status: 'failed', message: err.message};
-          });
+        });
     }
 });
 
