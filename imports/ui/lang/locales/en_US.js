@@ -643,6 +643,7 @@ module.exports = {
     "sortable.handles": "Handles",
 
     /* 07.19.Maps */
+    "map": "Map",
     "maps.google": "Google",
     "maps.yandex": "Yandex",
 

@@ -13,7 +13,6 @@ import { all, call, fork, put, takeEvery } from "redux-saga/effects";
 
 function* getSiteWeatherLocationKey(action) {
     try {
-        debugger;
         const url =
             ACCUWEATHER_LOCATION_KEY_API_ADDRESS +
             "?q=" +

@@ -38,31 +38,15 @@ import TagsInputExample from "../../../containers/forms/TagsInputExample";
 
 import "../../../assets/css/weather.css";
 import { getSiteWeather } from "../../../redux/accuweather/actions";
-import { ConvertEpochToDateFormat } from "../../../constants/define";
+import { ConvertEpochToDateFormat, MAPBOX_ACCESSTOKEN } from "../../../constants/define";
 import { connect } from "react-redux";
 
-//Offline Testing
-import {
-    withScriptjs,
-    withGoogleMap,
-    GoogleMap,
-    Marker
-} from "react-google-maps";
-
-//testing
 import Sites from "../../../../api/sites";
+import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 
-//Offline Testing
-const MapWithAMarker = withScriptjs(
-    withGoogleMap(props => (
-        <GoogleMap
-            defaultZoom={8}
-            defaultCenter={{ lat: -34.397, lng: 150.644 }}
-        >
-            <Marker position={{ lat: -34.397, lng: 150.644 }} />
-        </GoogleMap>
-    ))
-);
+const Map = ReactMapboxGl({
+    accessToken: MAPBOX_ACCESSTOKEN
+  });
 
 class CommonPage extends Component {
     constructor(props) {
@@ -132,10 +116,7 @@ class CommonPage extends Component {
                 " " +
                 dateTime.ampm;
 
-            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;            
-            // weatherTemperature = Math.round(
-            //     this.props.weatherData.data.Temperature.Imperial.Value
-            // );
+            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;                        
         }
 
         const { messages } = this.props.intl;
@@ -153,21 +134,22 @@ class CommonPage extends Component {
                                 <Card className="mb-4">
                                     <CardBody>
                                         <CardTitle>
-                                            <IntlMessages id="maps.google" />
+                                            <IntlMessages id="map" />
                                         </CardTitle>
 
-                                        <MapWithAMarker
-                                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCO8MfadmlotuuHC8wmjwL_46I5QAMIiRU&v=3.exp&libraries=geometry,drawing,places"
-                                            loadingElement={
-                                                <div className="map-item" />
-                                            }
-                                            containerElement={
-                                                <div className="map-item" />
-                                            }
-                                            mapElement={
-                                                <div className="map-item" />
-                                            }
-                                        />
+                                        <Map
+                                            style="mapbox://styles/mapbox/streets-v9"
+                                            containerStyle={{
+                                                height: '400px',
+                                                width: '100%'
+                                            }}              
+                                            zoom = {[11.15]}                                            
+                                            center = {[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
+                                            >                                            
+                                            <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15', 'icon-size': 3 }}>
+                                                <Feature coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]} />                                                
+                                            </Layer>
+                                        </Map>                                        
                                     </CardBody>
                                 </Card>
                                 <Card className="mb-4">

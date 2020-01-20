@@ -21,6 +21,7 @@ import {getContainerList} from '../../../redux/azureblob/actions';
 
 // import AzureStorage from 'azure-storage';
 
+// import { BlobServiceClient } from '@azure/storage-blob';
 // import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
 // import { AZURE_ACCOUNT, AZURE_ACCOUNT_KEY } from '../../../constants/define';
 
