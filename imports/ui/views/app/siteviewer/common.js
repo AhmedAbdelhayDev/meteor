@@ -42,11 +42,12 @@ import { ConvertEpochToDateFormat, MAPBOX_ACCESSTOKEN } from "../../../constants
 import { connect } from "react-redux";
 
 import Sites from "../../../../api/sites";
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
+import ReactMapboxGl, { Layer, Feature, Marker } from 'react-mapbox-gl';
+import "../../../assets/css/mapbox.css"
 
 const Map = ReactMapboxGl({
     accessToken: MAPBOX_ACCESSTOKEN
-  });
+});
 
 class CommonPage extends Component {
     constructor(props) {
@@ -132,7 +133,7 @@ class CommonPage extends Component {
                         <Row>
                             <Colxx xxs="12" xl="8" className="col-left">
                                 <Card className="mb-4">
-                                    <CardBody>
+                                    <CardBody className="pt-0">
                                         <CardTitle>
                                             <IntlMessages id="map" />
                                         </CardTitle>
@@ -146,9 +147,14 @@ class CommonPage extends Component {
                                             zoom = {[11.15]}                                            
                                             center = {[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
                                             >                                            
-                                            <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15', 'icon-size': 3 }}>
+                                            {/* <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15', 'icon-size': 3 }}>
                                                 <Feature coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]} />                                                
-                                            </Layer>
+                                            </Layer> */}
+                                            <Marker
+                                                coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
+                                                anchor="bottom">
+                                                <img className="marker-icon" src={"/assets/icon/marker-icon1.png"}/>
+                                            </Marker>                                            
                                         </Map>                                        
                                     </CardBody>
                                 </Card>

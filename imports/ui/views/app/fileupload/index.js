@@ -149,7 +149,7 @@ class FileUploadPage extends Component {
                         <Separator className="mb-5" />
 
                         <Card>
-                            <CardBody>
+                            <CardBody className="pt-0">
                                 <CardTitle>
                                     <IntlMessages id="menu.fileupload" />
                                 </CardTitle>
