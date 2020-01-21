@@ -16,17 +16,7 @@ import { injectIntl } from "react-intl";
 
 import { FileListTableWithPaginationCard } from "../../../containers/ui/FileListTableCards";
 
-import files from "../../../data/files";
-
-import {
-    withScriptjs,
-    withGoogleMap,
-    GoogleMap,
-    Marker
-} from "react-google-maps";
-
-
-import axios from "axios";
+// import axios from "axios";
 
 import { servicePath, themeRadiusStorageKey } from "../../../constants/defaultValues";
 
@@ -34,7 +24,7 @@ import DataListView from "../../../containers/pages/DataListView";
 import Pagination from "../../../containers/pages/Pagination";
 import ContextMenuContainer from "../../../containers/pages/ContextMenuContainer";
 
-import {GetStandardDate} from '../../../constants/define';
+import {GetStandardDate, MAPBOX_ACCESSTOKEN} from '../../../constants/define';
 import { withTracker } from 'meteor/react-meteor-data';
 import Sites from "/imports/api/sites";
 import Blobs from "/imports/api/blobs";
@@ -44,15 +34,13 @@ import filesize from 'filesize';
 function collect(props) {
   return { data: props.data };
 }
-const apiUrl = servicePath + "/cakes/paging";
 
-const MapWithAMarker = withScriptjs(
-    withGoogleMap(props => (
-        <GoogleMap defaultZoom={8} defaultCenter={{ lat: -34.397, lng: 150.644 }}>
-        <Marker position={{ lat: -34.397, lng: 150.644 }} />
-        </GoogleMap>
-    ))
-);
+import "../../../assets/css/mapbox.css"
+import ReactMapboxGl, { Layer, Feature, Marker } from 'react-mapbox-gl';
+
+const Map = ReactMapboxGl({
+    accessToken: MAPBOX_ACCESSTOKEN
+});
 
 class FileViewerPage extends Component {
   constructor(props) {
@@ -71,7 +59,8 @@ class FileViewerPage extends Component {
       lastChecked: null,
       isLoading: false,
       siteCount: 0,
-      files: []
+      files: [],
+      sites: []
     };
   }
 
@@ -257,6 +246,8 @@ class FileViewerPage extends Component {
               "abstract.state": 1,
               "abstract.city": 1,
               "abstract.site_name": 1,
+              "data.address.latitude": 1,
+              "data.address.longitude": 1,
               updated_at: 1,
               site_id: 1
           }
@@ -305,7 +296,8 @@ class FileViewerPage extends Component {
       items: data.data,
       selectedItems: [],
       totalItemCount: data.totalItem,
-      isLoading: true
+      isLoading: true,
+      sites
     });
   }
 
@@ -329,6 +321,15 @@ class FileViewerPage extends Component {
   };
 
   render() {
+
+    let centerPos = {longitude: -77, latitude: 43}
+    if( this.state.sites.length > 0 ) {
+      const defaultSite = this.state.sites[0];
+      centerPos = {
+        longitude: defaultSite.data.address.longitude,
+        latitude: defaultSite.data.address.latitude
+      }
+    }
     
     return !this.state.isLoading ? (
       <div className="loading" />
@@ -371,15 +372,36 @@ class FileViewerPage extends Component {
             <Row>
               <Colxx xxs="12" xl="8" className="col-left">
                 <Card className="mb-4">
-                    <CardBody>
+                    <CardBody className="pt-0">
                         <CardTitle>
-                          <IntlMessages id="maps.google" />
+                          <IntlMessages id="map" />
                         </CardTitle>
-                        <MapWithAMarker
-                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCO8MfadmlotuuHC8wmjwL_46I5QAMIiRU&v=3.exp&libraries=geometry,drawing,places"
-                        loadingElement={<div className="map-item" />}
-                        containerElement={<div className="map-item" />}
-                        mapElement={<div className="map-item" />}/>
+                        <Map
+                            style="mapbox://styles/mapbox/streets-v9"
+                            containerStyle={{
+                                height: '400px',
+                                width: '100%'
+                            }}              
+                            zoom = {[11.15]}                                            
+                            center = {[centerPos.longitude, centerPos.latitude]}
+                            >                                            
+                            {/* <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15', 'icon-size': 3, "icon-allow-overlap": true }}>
+                                <Feature key={1} coordinates={[-77, 43]} />                                      
+                                <Feature key={2} coordinates={[-77.01, 43.01]} />
+                            </Layer>       */}
+
+                            {
+                              this.state.sites.map(site => {
+                                return (
+                                  <Marker
+                                    coordinates={[site.data.address.longitude, site.data.address.latitude]}
+                                    anchor="bottom">
+                                    <img className="marker-icon" src={"/assets/icon/marker-icon1.png"}/>
+                                  </Marker>
+                                )
+                              })
+                            }                            
+                        </Map>
                     </CardBody>
                 </Card>
                 <FileListTableWithPaginationCard data={this.state.files}/>

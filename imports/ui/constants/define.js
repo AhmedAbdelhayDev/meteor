@@ -17,6 +17,9 @@ export const AZURE_ACCOUNT = "consilienceanalytics";
 export const AZURE_ACCOUNT_KEY =
     "1mz5nmTf0ufgkYHpc1KFf+UHTIjxDpAHmIMpKxXmLILLx4jUn4osXfeeS+5arP0UquBU7EYe5ku8w1kEHIBYeA==";
 
+/* Mapbox */
+export const MAPBOX_ACCESSTOKEN = "pk.eyJ1IjoibmFzdGlhNzIzIiwiYSI6ImNrNWIxY2NrMTE1bGEzZXBjcTk3YWhoNWIifQ.1my5B-_4UQxQYqClNE7u4Q";
+
 export function generateUUID() {
     const pattern = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
     return pattern.replace(/[xy]/g, c => {

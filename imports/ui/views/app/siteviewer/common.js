@@ -38,31 +38,16 @@ import TagsInputExample from "../../../containers/forms/TagsInputExample";
 
 import "../../../assets/css/weather.css";
 import { getSiteWeather } from "../../../redux/accuweather/actions";
-import { ConvertEpochToDateFormat } from "../../../constants/define";
+import { ConvertEpochToDateFormat, MAPBOX_ACCESSTOKEN } from "../../../constants/define";
 import { connect } from "react-redux";
 
-//Offline Testing
-import {
-    withScriptjs,
-    withGoogleMap,
-    GoogleMap,
-    Marker
-} from "react-google-maps";
-
-//testing
 import Sites from "../../../../api/sites";
+import ReactMapboxGl, { Layer, Feature, Marker } from 'react-mapbox-gl';
+import "../../../assets/css/mapbox.css"
 
-//Offline Testing
-const MapWithAMarker = withScriptjs(
-    withGoogleMap(props => (
-        <GoogleMap
-            defaultZoom={8}
-            defaultCenter={{ lat: -34.397, lng: 150.644 }}
-        >
-            <Marker position={{ lat: -34.397, lng: 150.644 }} />
-        </GoogleMap>
-    ))
-);
+const Map = ReactMapboxGl({
+    accessToken: MAPBOX_ACCESSTOKEN
+});
 
 class CommonPage extends Component {
     constructor(props) {
@@ -132,9 +117,7 @@ class CommonPage extends Component {
                 " " +
                 dateTime.ampm;
 
-            weatherTemperature = Math.round(
-                this.props.weatherData.data.Temperature.Metric.Value
-            );
+            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;                        
         }
 
         const { messages } = this.props.intl;
@@ -150,23 +133,29 @@ class CommonPage extends Component {
                         <Row>
                             <Colxx xxs="12" xl="8" className="col-left">
                                 <Card className="mb-4">
-                                    <CardBody>
+                                    <CardBody className="pt-0">
                                         <CardTitle>
-                                            <IntlMessages id="maps.google" />
+                                            <IntlMessages id="map" />
                                         </CardTitle>
 
-                                        <MapWithAMarker
-                                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCO8MfadmlotuuHC8wmjwL_46I5QAMIiRU&v=3.exp&libraries=geometry,drawing,places"
-                                            loadingElement={
-                                                <div className="map-item" />
-                                            }
-                                            containerElement={
-                                                <div className="map-item" />
-                                            }
-                                            mapElement={
-                                                <div className="map-item" />
-                                            }
-                                        />
+                                        <Map
+                                            style="mapbox://styles/mapbox/streets-v9"
+                                            containerStyle={{
+                                                height: '400px',
+                                                width: '100%'
+                                            }}              
+                                            zoom = {[11.15]}                                            
+                                            center = {[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
+                                            >                                            
+                                            {/* <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15', 'icon-size': 3 }}>
+                                                <Feature coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]} />                                                
+                                            </Layer> */}
+                                            <Marker
+                                                coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
+                                                anchor="bottom">
+                                                <img className="marker-icon" src={"/assets/icon/marker-icon1.png"}/>
+                                            </Marker>                                            
+                                        </Map>                                        
                                     </CardBody>
                                 </Card>
                                 <Card className="mb-4">
@@ -1855,7 +1844,7 @@ class CommonPage extends Component {
                                                 <p className="module-header title">
                                                     Current Weather
                                                     <span className="temp-unit">
-                                                        °C
+                                                        °F
                                                     </span>
                                                 </p>
                                                 <p className="module-header sub date">
@@ -1889,7 +1878,7 @@ class CommonPage extends Component {
                                                 </div>
                                             </div>
                                         )}
-                                        <p className="text-muted text-small mb-2">
+                                        {/* <p className="text-muted text-small mb-2">
                                             {messages["forms.tags"]}
                                         </p>
                                         <p className="mb-3">
@@ -1922,7 +1911,7 @@ class CommonPage extends Component {
                                                 DESIGN
                                             </Badge>
                                         </p>
-                                        <TagsInputExample />
+                                        <TagsInputExample /> */}
                                     </CardBody>
                                 </Card>
                             </Colxx>
