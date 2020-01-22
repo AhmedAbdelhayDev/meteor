@@ -17,6 +17,8 @@ export const AZURE_ACCOUNT = "consilienceanalytics";
 export const AZURE_ACCOUNT_KEY =
     "1mz5nmTf0ufgkYHpc1KFf+UHTIjxDpAHmIMpKxXmLILLx4jUn4osXfeeS+5arP0UquBU7EYe5ku8w1kEHIBYeA==";
 
+export const FILE_UPLOAD_URL = "http://localhost:3000/fileupload";
+
 /* Mapbox */
 // export const MAPBOX_ACCESSTOKEN = "pk.eyJ1IjoibmFzdGlhNzIzIiwiYSI6ImNrNWIxY2NrMTE1bGEzZXBjcTk3YWhoNWIifQ.1my5B-_4UQxQYqClNE7u4Q";
 export const MAPBOX_ACCESSTOKEN = "pk.eyJ1IjoibXNoZXNrZXkiLCJhIjoiY2sxMnh4cTkxMDNxMjNodGNyMXNoa2RvdCJ9.4cngTMdgxAGYGOqEbwRCQQ";

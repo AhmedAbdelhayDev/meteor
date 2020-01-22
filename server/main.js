@@ -57,7 +57,7 @@ Meteor.startup(() => {
 
 function getFileType(filename) {
     
-    let ext = path.extname(filename);
+    let ext = path.extname(filename.toLowerCase());
 
     let filetype = FILE_TYPE_OTHERS;
     if( FILE_EXT_LASER.includes(ext) ) {
