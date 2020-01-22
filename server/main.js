@@ -10,6 +10,8 @@ var fs = require('fs');
 var formidable = require('formidable');
 
 import {
+    PROJECT_NAME, 
+
     FILE_TYPE_LASER,
     FILE_TYPE_EXCEL,
     FILE_TYPE_WORD,
@@ -219,7 +221,7 @@ async function uploadFiles(info) {
     }
   
     // Create a container
-    const containerName = getRegContainerName(info.region + "-" + info.siteid);
+    const containerName = getRegContainerName(PROJECT_NAME);
     const containerClient = blobServiceClient.getContainerClient(containerName);
   
     try{
@@ -231,13 +233,13 @@ async function uploadFiles(info) {
     }
     
     // Create a blob
-    var userName = "Nastia";
-    var userID = "Nastia";
+    var userName = "User1";
+    var userID = "user1";
     
     const date = new Date();
     const fileType = getFileType(info.filename);
     //console.log(fileType);
-    const blobName = fileType + "/" + date.getTime() + "-" + userName + "-" + getRegFileName(info.filename);
+    const blobName = info.region + "/" + info.siteid + "/" + fileType + "/" + date.getTime() + "-" + userName + "-" + getRegFileName(info.filename);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     const uploadBlobResponse = await blockBlobClient.uploadFile(info.filepath);
     console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
