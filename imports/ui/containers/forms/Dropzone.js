@@ -3,12 +3,13 @@ import DropzoneComponent from "react-dropzone-component";
 import "dropzone/dist/min/dropzone.min.css";
 
 import { NotificationManager } from "../../components/common/react-notifications";
+import {FILE_UPLOAD_URL} from '../../constants/define'
 
 var ReactDOMServer = require('react-dom/server');
 
 var dropzoneComponentConfig = {
   // postUrl: "https://httpbin.org/post"
-  postUrl: "http://localhost:3000/fileupload"
+  postUrl: FILE_UPLOAD_URL
 };
 var dropzoneConfig = {
   thumbnailHeight: 160,
