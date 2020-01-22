@@ -1,0 +1,12 @@
+.deni-react-treeview-container {
+    font-family: tahoma,arial;
+    font-size: 12px;
+    padding: 0px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    border: 0;
+    /* border-color: #a5c7e3; */
+    width: 100%;
+    height: 90%;
+    background-color: #fafafa;
+}

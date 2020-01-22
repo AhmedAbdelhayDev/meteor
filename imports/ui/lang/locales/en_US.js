@@ -648,6 +648,7 @@ module.exports = {
     "maps.yandex": "Yandex",
 
     /* File Viewer */
+    "filelist": "File List",
     "fileviewer.filelist": "File List",
     "fileviewer.sitelist": "Site List",
 
