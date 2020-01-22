@@ -160,9 +160,9 @@ class FileUploadPage extends Component {
                                     uploaded = {this.uploaded}
                                 />
                                 <div className="text-center mt-4">
-                                    <Button color="primary" className="mr-4" onClick={this.uploadfiles} disabled={!this.state.uploadAvailable}>
+                                    {/* <Button color="primary" className="mr-4" onClick={this.uploadfiles} disabled={!this.state.uploadAvailable}>
                                         <IntlMessages id="file.uploadfiles" />
-                                    </Button>
+                                    </Button> */}
 
                                     <Button color="danger" onClick={this.clear} disabled={!this.state.clearAvailable}>
                                         <IntlMessages id="file.clear" />
