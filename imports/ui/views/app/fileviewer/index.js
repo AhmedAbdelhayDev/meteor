@@ -371,7 +371,7 @@ class FileViewerPage extends Component {
               <Colxx xxs="12" xl="8" className="col-left">
                 <Card className="mb-4">
                     <CardBody className="pt-0">
-                        <CardTitle>
+                        <CardTitle className="mt-3 mb-3">
                           <IntlMessages id="map" />
                         </CardTitle>
                         <Map
