@@ -299,33 +299,42 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
         //   console.log(file)
         // }
 
-        uploaded = true;
-        // oldpath : temporary folder to which file is saved to
-        const oldpath = files.file.path;
-        const arr = fromURL.split("/");
-        const region = arr[arr.length - 4];
-        const siteid = arr[arr.length -1];
-
-        const fileInfo = {
-            region: region,
-            siteid: siteid,
-            filename: files.file.name,
-            filesize: files.file.size,
-            filetype: files.file.type,
-            uploadid: path.basename(files.file.path),
-            filepath: files.file.path
+        try{
+            uploaded = true;
+            // oldpath : temporary folder to which file is saved to
+            const oldpath = files.file.path;
+            const arr = fromURL.split("/");
+            const region = arr[arr.length - 4];
+            const siteid = arr[arr.length -1];
+    
+            const fileInfo = {
+                region: region,
+                siteid: siteid,
+                filename: files.file.name,
+                filesize: files.file.size,
+                filetype: files.file.type,
+                uploadid: path.basename(files.file.path),
+                filepath: files.file.path
+            }
+    
+            //Upload to Azure Blob
+            uploadFiles(fileInfo)
+            .then(res => {
+                return res; //list of uploaded file uuid
+            })
+            .catch((err) => {
+                console.error("Error Upload Files:", err.message);            
+                return {status: 'failed', message: err.message};
+                // throw new Meteor.Error('Uploading files failed.');
+            });       
         }
-
-        //Upload to Azure Blob
-        uploadFiles(fileInfo)
-        .then(res => {
-            return res; //list of uploaded file uuid
-        })
-        .catch((err) => {
-            console.error("Error Upload Files:", err.message);            
+        catch(err) {
+            console.error("Error formidable:", err.message);            
             return {status: 'failed', message: err.message};
             // throw new Meteor.Error('Uploading files failed.');
-        });        
+        };  
+
+         
 
         // var newpath = upload_path + files.filetoupload.name;
         // // copy the file to a new location
