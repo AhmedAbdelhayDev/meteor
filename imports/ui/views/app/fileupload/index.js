@@ -150,7 +150,7 @@ class FileUploadPage extends Component {
 
                         <Card>
                             <CardBody className="pt-0">
-                                <CardTitle>
+                                <CardTitle className="mt-3 mb-3">
                                     <IntlMessages id="menu.fileupload" />
                                 </CardTitle>
                                 <Dropzone

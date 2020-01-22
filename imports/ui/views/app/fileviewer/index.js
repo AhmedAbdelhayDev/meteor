@@ -163,8 +163,6 @@ class FileViewerPage extends Component {
           }
         ).fetch();
 
-          debugger;
-
         let files = [];
         blobs.map(blob => {
           files = files.concat({

@@ -45,6 +45,12 @@ import Sites from "../../../../api/sites";
 import ReactMapboxGl, { Layer, Feature, Marker } from 'react-mapbox-gl';
 import "../../../assets/css/mapbox.css"
 
+import TreeView from 'deni-react-treeview';
+import "../../../assets/css/treeview.css";
+
+import Blobs from "/imports/api/blobs";
+import {GetFileTypeName} from '../../../../constants/global';
+
 const Map = ReactMapboxGl({
     accessToken: MAPBOX_ACCESSTOKEN
 });
@@ -55,8 +61,12 @@ class CommonPage extends Component {
         this.toggleTab = this.toggleTab.bind(this);
         this.state = {
             activeFirstTab: "1",
-            siteData: null
+            siteData: null,
+            site_id: null,
+            files: []
         };
+
+        this.onActionButtonClick = this.onActionButtonClick.bind(this);     
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -74,10 +84,69 @@ class CommonPage extends Component {
                 postal_code: siteData.abstract.zip_code
             });
 
-            return { siteData };
+            //file list
+            const blobs = Blobs.find(
+                {site_id: site_id},
+                {
+                    fields: {              
+                        file_name: 1,
+                        file_type: 1,
+                        file_size: 1,
+                        user_name: 1,
+                        uploaded_date: 1,
+                        _id: 1
+                    },
+                    sort: {
+                        file_type: 1
+                    }
+                }
+            ).fetch();
+
+            debugger;
+      
+            let files = [];
+            let fileDic = {};
+            blobs.map(blob => {
+
+                if( fileDic[blob.file_type] ) {
+                    fileDic[blob.file_type].children.push(
+                        {
+                            id: blob._id,
+                            text: blob.file_name,
+                            isLeaf: true
+                        }
+                    );
+                }
+                else {
+                    fileDic[blob.file_type] = {
+                        id: blob.file_type,
+                        text: GetFileTypeName(blob.file_type),
+                        children: [
+                            {
+                                id: blob._id,
+                                text: blob.file_name,
+                                isLeaf: true
+                            }
+                        ]
+                    }
+                }                
+            });
+
+            //convert dic to array
+            Object.entries(fileDic).map(([key, value]) => {
+                files.push(value);
+            })
+      
+            return { siteData, site_id, files };
         }
 
         return null;
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if( prevState.site_id !== this.state.site_id ) {
+            
+        }
     }
 
     toggleTab(tab) {
@@ -88,7 +157,27 @@ class CommonPage extends Component {
         }
     }
 
+    onActionButtonClick(item, actionButton) {
+        const buttonName = actionButton.type.name;
+        console.log('Action: trash, Item: ' + item.text);
+        console.log('Action: trash, Item ID: ' + item.id);
+
+        switch (buttonName) {
+          case 'FaTrashO':
+            console.log('Action: trash, Item: ' + item.text);
+            break;
+          case 'FaEdit':
+            alert('Action: edit, Item: ' + item.text);
+            break;
+          default:
+        }
+    }
+
     render() {
+        const actionButtons = [
+            (<div className={"glyph-icon iconsminds-download"} />)
+          ];
+
         if (this.state.siteData === null) {
             return <div>Please insert new site.</div>;
         }
@@ -134,7 +223,7 @@ class CommonPage extends Component {
                             <Colxx xxs="12" xl="8" className="col-left">
                                 <Card className="mb-4">
                                     <CardBody className="pt-0">
-                                        <CardTitle>
+                                        <CardTitle className="mt-3 mb-3">
                                             <IntlMessages id="map" />
                                         </CardTitle>
 
@@ -1868,14 +1957,14 @@ class CommonPage extends Component {
                                                             °
                                                             <span className="hi-lo-label"></span>
                                                         </p>
+                                                        <div className="phrase">
+                                                            {
+                                                                this.props.weatherData
+                                                                    .data.WeatherText
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="phrase">
-                                                    {
-                                                        this.props.weatherData
-                                                            .data.WeatherText
-                                                    }
-                                                </div>
+                                                </div>                                                
                                             </div>
                                         )}
                                         {/* <p className="text-muted text-small mb-2">
@@ -1912,6 +2001,20 @@ class CommonPage extends Component {
                                             </Badge>
                                         </p>
                                         <TagsInputExample /> */}
+                                    </CardBody>
+                                    
+                                </Card>
+                                <Card>
+                                    <CardBody className="pt-0">
+                                        <CardTitle className="mt-3 mb-3">
+                                            <IntlMessages id="filelist" />
+                                        </CardTitle>                                    
+                                        <TreeView
+                                            items={ this.state.files }
+                                            selectRow={ true }
+                                            actionButtons={ actionButtons }
+                                            onActionButtonClick={ this.onActionButtonClick }
+                                        />
                                     </CardBody>
                                 </Card>
                             </Colxx>

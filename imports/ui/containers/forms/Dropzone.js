@@ -12,7 +12,7 @@ var dropzoneComponentConfig = {
 };
 var dropzoneConfig = {
   thumbnailHeight: 160,
-  maxFilesize: 2,
+  maxFilesize: 200, //MB
   previewTemplate: ReactDOMServer.renderToStaticMarkup(
     <div className="dz-preview dz-file-preview mb-3">
       <div className="d-flex flex-row ">
@@ -63,7 +63,7 @@ export default class Dropzone extends Component {
   }
 
   uploadfiles(info) {
-    console.log("upload files");
+    console.log("upload files");        
     Meteor.call('fileupload', this.myDropzone.files, info, (err, res) => {
       if (err) {        
         NotificationManager.error(
