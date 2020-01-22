@@ -1,3 +1,6 @@
+/* Project Info */
+export const PROJECT_NAME = "arcadia";
+
 
 /* File */
 export const FILE_TYPE_LASER = "laser";

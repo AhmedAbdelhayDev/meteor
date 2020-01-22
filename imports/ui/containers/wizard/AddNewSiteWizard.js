@@ -34,38 +34,38 @@ class AddNewSiteWizard extends Component {
             fields: [
                 {
                     valid: false,
-                    name: "name",
-                    value: "Test"
+                    name: "",
+                    value: ""
                 },
                 {
                     valid: false,
-                    name: "antenna",
-                    value: "Antenna"
+                    name: "",
+                    value: ""
                 },
                 {
                     valid: false,
-                    name: "address",
-                    value: "151%20Battle%20Green%20Dr"
+                    name: "",
+                    value: ""
                 },
                 {
                     valid: false,
-                    name: "city",
-                    value: "Rochester"
+                    name: "",
+                    value: ""
                 },
                 {
                     valid: false,
-                    name: "state",
-                    value: "NY"
+                    name: "",
+                    value: ""
                 },
                 {
                     valid: false,
-                    name: "zip",
-                    value: "14624"
+                    name: "",
+                    value: ""
                 },
                 {
                     valid: false,
-                    name: "region",
-                    value: "NE"
+                    name: "",
+                    value: ""
                 }
             ]
         };
@@ -112,7 +112,7 @@ class AddNewSiteWizard extends Component {
 
     validateText(value) {
         let error;
-        if (!value) {
+        if (!value || value.trim() === "" ) {
             error = "Please enter value";
         }
         return error;
