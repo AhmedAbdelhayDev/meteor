@@ -34,37 +34,37 @@ class AddNewSiteWizard extends Component {
             fields: [
                 {
                     valid: false,
-                    name: "",
+                    name: "name",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "",
+                    name: "antenna",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "",
+                    name: "address",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "",
+                    name: "city",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "",
+                    name: "state",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "",
+                    name: "zip",
                     value: ""
                 },
                 {
                     valid: false,
-                    name: "",
+                    name: "region",
                     value: ""
                 }
             ]
