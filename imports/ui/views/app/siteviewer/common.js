@@ -38,7 +38,7 @@ import TagsInputExample from "../../../containers/forms/TagsInputExample";
 
 import "../../../assets/css/weather.css";
 import { getSiteWeather } from "../../../redux/accuweather/actions";
-import { ConvertEpochToDateFormat, MAPBOX_ACCESSTOKEN } from "../../../constants/define";
+import { ConvertEpochToDateFormat, MAPBOX_ACCESSTOKEN, SERVER_ADDRESS } from "../../../constants/define";
 import { connect } from "react-redux";
 
 import Sites from "../../../../api/sites";
@@ -51,14 +51,9 @@ import "../../../assets/css/treeview.css";
 import Blobs from "/imports/api/blobs";
 import {GetFileTypeName} from '../../../../constants/global';
 
-import renderHTML from 'react-render-html';
-
-const Map = ReactMapboxGl({
-    accessToken: MAPBOX_ACCESSTOKEN
-});
-
-
-let someHTML = "<a class='github' href='https://github.com'><b>GitHubrrrr</b></a>";
+// const Map = ReactMapboxGl({
+//     accessToken: MAPBOX_ACCESSTOKEN
+// });
 
 class CommonPage extends Component {
     constructor(props) {
@@ -152,6 +147,13 @@ class CommonPage extends Component {
         }
     }
 
+    componentDidMount() {
+        const scriptGlb = document.createElement("script");
+        scriptGlb.src = SERVER_ADDRESS + "glbmap.js";
+        scriptGlb.async = false;
+        document.body.appendChild(scriptGlb);
+    }
+
     toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
@@ -232,7 +234,8 @@ class CommonPage extends Component {
                                             <IntlMessages id="map" />
                                         </CardTitle>
 
-                                        {renderHTML(someHTML)}
+                                        <div id='map' style={{width:'100%', height:'400px'}}></div>
+                                        {/* {renderHTML(someHTML)} */}
 
                                         {/* <Map
                                             style="mapbox://styles/mapbox/streets-v9"

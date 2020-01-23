@@ -1,4 +1,7 @@
 /* Constants */
+export const SERVER_ADDRESS = "http://localhost:3000/";
+export const FILE_UPLOAD_URL = SERVER_ADDRESS + "fileupload";
+
 export const ISLA_SITE_ID = "ISLA_SITE_ID";
 
 /* Estated API */
@@ -10,15 +13,13 @@ export const ACCUWEATHER_LOCATION_KEY_API_ADDRESS =
     "http://dataservice.accuweather.com/locations/v1/search";
 export const ACCUWEATHER_CURRENT_API_ADDRESS =
     "http://dataservice.accuweather.com/currentconditions/v1/";
-export const ACCUWEATHER_API_KEY = "I6MwcKqGflK92rOvD5HxGL6in78jLCei";
+export const ACCUWEATHER_API_KEY = "W62ykXGtLAPpYSffpGWiXZyGWfZdACAW";
 
 /* AZURE Blob */
 // export const AZURE_ACCOUNT = "consilienceanalytics";
 export const AZURE_ACCOUNT = "arcadiaisla";
 // export const AZURE_ACCOUNT_KEY ="1mz5nmTf0ufgkYHpc1KFf+UHTIjxDpAHmIMpKxXmLILLx4jUn4osXfeeS+5arP0UquBU7EYe5ku8w1kEHIBYeA==";
 export const AZURE_ACCOUNT_KEY ="5A5Jmtzb+jRMPIcVJaGA04l4aqxDXcATk9M/lII6hUemF7Xc7+aGPQ6BCq4SJ7LjpG00l2J7FoOsrkgBSbDv0Q==";
-
-export const FILE_UPLOAD_URL = "http://localhost:3000/fileupload";
 
 /* Mapbox */
 // export const MAPBOX_ACCESSTOKEN = "pk.eyJ1IjoibmFzdGlhNzIzIiwiYSI6ImNrNWIxY2NrMTE1bGEzZXBjcTk3YWhoNWIifQ.1my5B-_4UQxQYqClNE7u4Q";
