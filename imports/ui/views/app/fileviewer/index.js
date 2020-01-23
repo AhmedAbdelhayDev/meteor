@@ -391,7 +391,7 @@ class FileViewerPage extends Component {
                             {
                               this.state.sites.map(site => {
                                 return (
-                                  <Marker
+                                  <Marker key={site.site_id}
                                     coordinates={[site.data.address.longitude, site.data.address.latitude]}
                                     anchor="bottom">
                                     <img className="marker-icon" src={"/assets/icon/marker-icon1.png"}/>
