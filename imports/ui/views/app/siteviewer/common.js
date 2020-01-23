@@ -51,9 +51,14 @@ import "../../../assets/css/treeview.css";
 import Blobs from "/imports/api/blobs";
 import {GetFileTypeName} from '../../../../constants/global';
 
+import renderHTML from 'react-render-html';
+
 const Map = ReactMapboxGl({
     accessToken: MAPBOX_ACCESSTOKEN
 });
+
+
+let someHTML = "<a class='github' href='https://github.com'><b>GitHubrrrr</b></a>";
 
 class CommonPage extends Component {
     constructor(props) {
@@ -102,8 +107,6 @@ class CommonPage extends Component {
                 }
             ).fetch();
 
-            debugger;
-      
             let files = [];
             let fileDic = {};
             blobs.map(blob => {
@@ -162,15 +165,17 @@ class CommonPage extends Component {
         console.log('Action: trash, Item: ' + item.text);
         console.log('Action: trash, Item ID: ' + item.id);
 
-        switch (buttonName) {
-          case 'FaTrashO':
-            console.log('Action: trash, Item: ' + item.text);
-            break;
-          case 'FaEdit':
-            alert('Action: edit, Item: ' + item.text);
-            break;
-          default:
-        }
+        fetch('http://localhost:8080/employees/download')
+			.then(response => {
+				response.blob().then(blob => {
+					let url = window.URL.createObjectURL(blob);
+					let a = document.createElement('a');
+					a.href = url;
+					a.download = 'employees.json';
+					a.click();
+				});
+				//window.location.href = response.url;
+		});
     }
 
     render() {
@@ -227,7 +232,9 @@ class CommonPage extends Component {
                                             <IntlMessages id="map" />
                                         </CardTitle>
 
-                                        <Map
+                                        {renderHTML(someHTML)}
+
+                                        {/* <Map
                                             style="mapbox://styles/mapbox/streets-v9"
                                             containerStyle={{
                                                 height: '400px',
@@ -235,16 +242,13 @@ class CommonPage extends Component {
                                             }}              
                                             zoom = {[11.15]}                                            
                                             center = {[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
-                                            >                                            
-                                            {/* <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15', 'icon-size': 3 }}>
-                                                <Feature coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]} />                                                
-                                            </Layer> */}
+                                            >                                                                                        
                                             <Marker
                                                 coordinates={[this.state.siteData.data.address.longitude, this.state.siteData.data.address.latitude]}
                                                 anchor="bottom">
                                                 <img className="marker-icon" src={"/assets/icon/marker-icon1.png"}/>
-                                            </Marker>                                            
-                                        </Map>                                        
+                                            </Marker>                                    
+                                        </Map>                                         */}
                                     </CardBody>
                                 </Card>
                                 <Card className="mb-4">
