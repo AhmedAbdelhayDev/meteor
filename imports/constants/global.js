@@ -1,5 +1,5 @@
 /* Project Info */
-export const PROJECT_NAME = "arcadia";
+export const AZURE_CONTAINER_NAME = "arcadia-site-media";
 
 
 /* File */
