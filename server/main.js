@@ -11,7 +11,7 @@ var formidable = require('formidable');
 var multer=require("multer");
 
 import {
-    PROJECT_NAME, 
+    AZURE_CONTAINER_NAME, 
 
     FILE_TYPE_LASER,
     FILE_TYPE_EXCEL,
@@ -222,7 +222,7 @@ async function uploadFiles(info) {
     }
   
     // Create a container
-    const containerName = getRegContainerName(PROJECT_NAME);
+    const containerName = getRegContainerName(AZURE_CONTAINER_NAME);
     const containerClient = blobServiceClient.getContainerClient(containerName);
   
     try{
