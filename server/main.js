@@ -8,6 +8,7 @@ import blobServiceClient from "/imports/api/azureblob";
 const path = require('path');
 var fs = require('fs');
 var formidable = require('formidable');
+var multer=require("multer");
 
 import {
     PROJECT_NAME, 
@@ -243,9 +244,17 @@ async function uploadFiles(info) {
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     const uploadBlobResponse = await blockBlobClient.uploadFile(info.filepath);
     console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
+    try {
+        fs.unlinkSync(info.filepath)
+        console.log("file removed");
+    } catch(err) {
+        console.error(err)
+    }
 
     //download test
-    // blockBlobClient.downloadToFile("C:\\test\\" + file.upload.filename);
+    // const blobDownloadResponse = await blockBlobClient.downloadToFile("C:\\test\\" + info.filename);    //OK
+    // console.log("Downloaded blob content");
+
     // const downloadBlockBlobResponse = await blockBlobClient.download(0);    //downloadToFile
     // console.log(
     //     "Downloaded blob content",
@@ -282,18 +291,26 @@ async function uploadFiles(info) {
     return true;
 }
 
-WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
+// var upload=multer({dest:"uploads/"});
+// var upload = multer().any();
+var upload = multer({dest:"uploads/"}).any();
 
+WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
+    
     console.log("**********   POST fileupload ************\n");
 
-    // console.log(req);
-    var uploaded = true;
-    const fromURL = req.headers.referer;
+    upload(req, res, function (err) {
+        // console.log(req);
+        var uploaded = true;
+        const fromURL = req.headers.referer;
 
-    new formidable.IncomingForm().parse(req, (err, fields, files) => {
+        var fields = req.fields;
+        var file = req.files[0];
+        
         if (err) {
-          console.error('Error', err)
-          throw err
+            console.error('Error', err)
+            res.writeHead(404);
+            throw err
         }
         console.log('Fields', fields)
         // console.log('Files', files)
@@ -304,7 +321,7 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
         try{
             uploaded = true;
             // oldpath : temporary folder to which file is saved to
-            const oldpath = files.file.path;
+            const oldpath = file.path;
             const arr = fromURL.split("/");
             const region = arr[arr.length - 4];
             const siteid = arr[arr.length -1];
@@ -312,11 +329,11 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
             const fileInfo = {
                 region: region,
                 siteid: siteid,
-                filename: files.file.name,
-                filesize: files.file.size,
-                filetype: files.file.type,
-                uploadid: path.basename(files.file.path),
-                filepath: files.file.path
+                filename: file.originalname,
+                filesize: file.size,
+                filetype: file.mimetype,
+                uploadid: file.filename,
+                filepath: file.path
             }
     
             //Upload to Azure Blob
@@ -334,46 +351,12 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
             console.error("Error formidable:", err.message);            
             return {status: 'failed', message: err.message};
             // throw new Meteor.Error('Uploading files failed.');
-        };  
+        };               
 
-         
+        console.log("********** upload end ************");
+    })
 
-        // var newpath = upload_path + files.filetoupload.name;
-        // // copy the file to a new location
-
-        // fs.rename(oldpath, newpath, function (err) {
-        //     if (err) throw err;
-        //     // you may respond with another html page
-        //     res.write('File uploaded and moved!');
-        //     res.end();
-        // });
-
-      })
-
-    if( uploaded  ) {
-        res.writeHead(200);
-        res.end("Upload Success");    
-    }
-    else {
-        res.writeHead(404);
-        res.end("Upload Failed");
-    }
-
-    // var filename = path.basename(req.params.filename);
-    // var filename = "test.png";
-    // filename = path.resolve(__dirname, filename);
-    // var dst = fs.createWriteStream(filename);
-    // req.pipe(dst);
-    // dst.on('drain', function() {
-    //     console.log('drain', new Date());
-    //     req.resume();
-    // });
-    // req.on('end', function () {
-    //     // res.send(200);
-    // });
-
-    // res.writeHead(200);
-    // res.end(`Hello world from: ${Meteor.release}`);
+    res.writeHead(200); 
 
     console.log("**********   POST fileupload END ************\n");
 });
