@@ -291,8 +291,6 @@ async function uploadFiles(info) {
     return true;
 }
 
-// var upload=multer({dest:"uploads/"});
-// var upload = multer().any();
 var upload = multer({dest:"uploads/"}).any();
 
 WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
@@ -357,6 +355,7 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
     })
 
     res.writeHead(200); 
+    res.end("success");
 
     console.log("**********   POST fileupload END ************\n");
 });
