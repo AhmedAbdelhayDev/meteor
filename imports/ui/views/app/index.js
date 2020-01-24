@@ -16,10 +16,6 @@ const SiteViewerPage = React.lazy(() =>
   import(/* webpackChunkName: "" */ './siteviewer')
 );
 
-const FileViewerPage = React.lazy(() =>
-  import(/* webpackChunkName: "" */ './fileviewer')
-);
-
 const FileUploadPage = React.lazy(() =>
   import(/* webpackChunkName: "" */ './fileupload')
 );
@@ -32,9 +28,9 @@ const Reporting = React.lazy(() =>
   import(/* webpackChunkName: "" */ './reporting')
 );
 
-const ArcadiaFileViewer = React.lazy(() =>
-  import(/* webpackChunkName: "" */ './preview')
-);
+// const ArcadiaFileViewer = React.lazy(() =>
+//   import(/* webpackChunkName: "" */ './preview')
+// );
 
 class App extends Component {
   render() {
@@ -62,14 +58,10 @@ class App extends Component {
                 path={`${match.url}/siteviewer`}
                 render={props => <SiteViewerPage {...props} />}
               />
-              <Route
+              {/* <Route
                 path={`${match.url}/preview`}
                 render={props => <ArcadiaFileViewer {...props} />}
-              />
-              <Route
-                path={`${match.url}/fileviewer`}
-                render={props => <FileViewerPage {...props} />}
-              />
+              />               */}
               <Route
                 path={`${match.url}/fileupload`}
                 render={props => <FileUploadPage {...props} />}

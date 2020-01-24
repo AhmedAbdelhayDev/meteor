@@ -54,7 +54,6 @@ import "../../../assets/css/treeview.css";
 import Blobs from "/imports/api/blobs";
 import { GetFileTypeName } from '../../../../constants/global';
 import ArcadiaFileViewer from '../common/arcadiafileviewer';
-import JwModal from '../common/JwModal';
 
 const path = require('path');
 
@@ -157,16 +156,10 @@ class CommonPage extends Component {
             case 'file_view':
                 {
                     let url = item.blobURL;
-                    let basename = path.basename(url); //time-username-filename?params
-                    let arr0 = basename.split("?");
-                    let fullname = arr0[0];
-                    let extname = path.extname(fullname);
-                    extname = extname.substr(1);    //remove '.'
+                    // this.setState({ filePath: url, fileType: extname, modalShow: true });
+                    let p = btoa(url);
+                    window.open(SERVER_ADDRESS + "preview?p=" + p);
 
-                    this.setState({ filePath: url, fileType: extname, modalShow: true });
-                    JwModal.open('custom-modal-1');
-
-                    // window.open(url);
                     //window.location.assign(url);
                     // //OR
                     // let a = document.createElement('a');
@@ -2061,19 +2054,6 @@ class CommonPage extends Component {
                         </Modal.Body>
                     </Modal>
                 </NewWindow> */}
-                <button onClick={JwModal.open('custom-modal-1')}>Open Modal 1</button>
-                <JwModal id="custom-modal-1">
-
-                    <h1>A Custom Modal!</h1>
-                    <p>
-                        Home page text: <input type="text" name="bodyText"/>
-                    </p>
-
-                    {this.state.filePath !== "/" && this.state.modalShow && (
-                        <ArcadiaFileViewer fileType={this.state.fileType} filePath={this.state.filePath} />
-                    )}
-                    <button onClick={JwModal.close('custom-modal-1')}>Close</button>
-                </JwModal>
 
             </Fragment>
         );
