@@ -1,17 +1,16 @@
 import { Meteor } from "meteor/meteor";
-import Links from "/imports/api/links";
 import Sites from "/imports/api/sites";
 import Blobs from "/imports/api/blobs";
 
-import blobServiceClient from "/imports/api/azureblob";
+import { azureStorage, blobService, blobServiceClient } from "/imports/api/azureblob";
 
 const path = require('path');
 var fs = require('fs');
 var formidable = require('formidable');
-var multer=require("multer");
+var multer = require("multer");
 
 import {
-    AZURE_CONTAINER_NAME, 
+    AZURE_CONTAINER_NAME,
 
     FILE_TYPE_LASER,
     FILE_TYPE_EXCEL,
@@ -34,7 +33,9 @@ import {
     FILE_EXT_PHOTO,
     FILE_EXT_VIDEO,
     FILE_EXT_MESHGUN,
-    FILE_EXT_3DASSETS
+    FILE_EXT_3DASSETS,
+
+    GetFileTypeName
 } from '/imports/constants/global'
 
 function insertLink(title, url) {
@@ -43,54 +44,41 @@ function insertLink(title, url) {
 
 Meteor.startup(() => {
     
-    // If the Links collection is empty, add some data.
-    if (Links.find().count() === 0) {
-        insertLink(
-            "Do the Tutorial",
-            "https://www.meteor.com/tutorials/react/creating-an-app"
-        );
-
-        insertLink("Follow the Guide", "http://guide.meteor.com");
-
-        insertLink("Read the Docs", "https://docs.meteor.com");
-
-        insertLink("Discussions", "https://forums.meteor.com");
-    }
 });
 
 function getFileType(filename) {
-    
+
     let ext = path.extname(filename.toLowerCase());
 
     let filetype = FILE_TYPE_OTHERS;
-    if( FILE_EXT_LASER.includes(ext) ) {
+    if (FILE_EXT_LASER.includes(ext)) {
         filetype = FILE_TYPE_LASER;
     }
-    else if( FILE_EXT_EXCEL.includes(ext) ) {
+    else if (FILE_EXT_EXCEL.includes(ext)) {
         filetype = FILE_TYPE_EXCEL;
     }
-    else if( FILE_EXT_WORD.includes(ext) ) {
+    else if (FILE_EXT_WORD.includes(ext)) {
         filetype = FILE_TYPE_WORD;
     }
-    else if( FILE_EXT_PDF.includes(ext) ) {
+    else if (FILE_EXT_PDF.includes(ext)) {
         filetype = FILE_TYPE_PDF;
     }
-    else if( FILE_EXT_TOWER.includes(ext) ) {
+    else if (FILE_EXT_TOWER.includes(ext)) {
         filetype = FILE_TYPE_TOWER;
     }
-    else if( FILE_EXT_AUTOCAD.includes(ext) ) {
+    else if (FILE_EXT_AUTOCAD.includes(ext)) {
         filetype = FILE_TYPE_AUTOCAD;
     }
-    else if( FILE_EXT_PHOTO.includes(ext) ) {
+    else if (FILE_EXT_PHOTO.includes(ext)) {
         filetype = FILE_TYPE_PHOTO;
     }
-    else if( FILE_EXT_VIDEO.includes(ext) ) {
+    else if (FILE_EXT_VIDEO.includes(ext)) {
         filetype = FILE_TYPE_VIDEO;
     }
-    else if( FILE_EXT_MESHGUN.includes(ext) ) {
+    else if (FILE_EXT_MESHGUN.includes(ext)) {
         filetype = FILE_TYPE_MESHGUN;
     }
-    else if( FILE_EXT_3DASSETS.includes(ext) ) {
+    else if (FILE_EXT_3DASSETS.includes(ext)) {
         filetype = FILE_TYPE_3DASSETS;
     }
 
@@ -103,151 +91,43 @@ function getRegContainerName(containerName) {
 }
 
 function getRegFileName(filename) {
-        let regFileName = filename;
+    let regFileName = filename;
     return regFileName;
 }
-/*
-async function uploadFiles(files, info) {
-    let i = 1;
-    for await (const container of blobServiceClient.listContainers()) {
-      console.log(`Container ${i++}: ${container.name}`);
-    }
-  
-    // Create a container
-    const containerName = getRegContainerName(info.region + "-" + info.site_id);
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-  
-    try{
-        const createContainerResponse = await containerClient.create();
-        console.log(`Create container ${containerName} successfully`, createContainerResponse.requestId);
-    }catch(error) {
-        // console.log(`Create container ${containerName} failed. Maybe, Already created. `, error);
-        console.log(`Create container ${containerName} failed. Maybe, Already created. `);
-    }
-    
-    var uploadedfiles = [];
-
-    // Create a blob
-    var userName = "Nastia";
-    var userID = "Nastia";
-    for await( const file of files ) {
-        const content = file.dataURL;
-        const date = new Date();
-        const fileType = getFileType(file.upload.filename);
-        //console.log(fileType);
-        const blobName = fileType + "/" + date.getTime() + "-" + userName + "-" + getRegFileName(file.upload.filename);
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        const uploadBlobResponse = await blockBlobClient.upload(content, Buffer.byteLength(content));
-        console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
-        uploadedfiles.push(file.upload.uuid);
-
-        //download test
-        // blockBlobClient.downloadToFile("C:\\test\\" + file.upload.filename);
-        // const downloadBlockBlobResponse = await blockBlobClient.download(0);    //downloadToFile
-        // console.log(
-        //     "Downloaded blob content",
-        //     await streamToString(downloadBlockBlobResponse.readableStreamBody)
-        // );
-
-        //Save upload information in the database
-        var addedFile = {
-            region: info.region,
-            site_id: info.site_id,
-            file_name: file.upload.filename,
-            file_type: fileType,
-            file_size: file.upload.total,
-            user_id: userID,
-            user_name: userName,
-            container_name: containerName,
-            blobl_name: blobName,
-            uploaded_date: date,
-            comments: ''
-        }
-
-        Blobs.insert(addedFile);
-    }
-    
-    // List blobs
-    i = 1;
-    for await (const blob of containerClient.listBlobsFlat()) {
-        console.log(`Blob ${i++}: ${blob.name}`);
-    }
-  
-    // // Delete container
-    // await containerClient.delete();  
-    // console.log("deleted container");
-
-    return uploadedfiles;
-}
-
-// A helper method used to read a Node.js readable stream into string
-async function streamToString(readableStream) {
-    return new Promise((resolve, reject) => {
-      const chunks = [];
-      readableStream.on("data", (data) => {
-        chunks.push(data.toString());
-      });
-      readableStream.on("end", () => {
-        resolve(chunks.join(""));
-      });
-      readableStream.on("error", reject);
-    });
-  }
-
-Meteor.methods({
-    'fileupload': function(files, info) {
-        console.log("=====  received file ======\n");
-        // console.log(files);
-        //console.log("================================ \n");
-        // throw new Meteor.Error('Uploading files failed.');
-
-        uploadFiles(files, info)
-        .then(res => {
-            return res; //list of uploaded file uuid
-        })
-        .catch((err) => {
-            console.error("Error Upload Files:", err.message);            
-            return {status: 'failed', message: err.message};
-            // throw new Meteor.Error('Uploading files failed.');
-            
-        });
-    }
-});
-*/
 
 async function uploadFiles(info) {
     let i = 1;
     for await (const container of blobServiceClient.listContainers()) {
-      console.log(`Container ${i++}: ${container.name}`);
+        console.log(`Container ${i++}: ${container.name}`);
     }
-  
+
     // Create a container
     const containerName = getRegContainerName(AZURE_CONTAINER_NAME);
     const containerClient = blobServiceClient.getContainerClient(containerName);
-  
-    try{
+
+    try {
         const createContainerResponse = await containerClient.create();
         console.log(`Create container ${containerName} successfully`, createContainerResponse.requestId);
-    }catch(error) {
+    } catch (error) {
         // console.log(`Create container ${containerName} failed. Maybe, Already created. `, error);
         console.log(`Create container ${containerName} failed. Maybe, Already created. `);
     }
-    
+
     // Create a blob
     var userName = "User1";
     var userID = "user1";
-    
+
     const date = new Date();
     const fileType = getFileType(info.filename);
     //console.log(fileType);
-    const blobName = info.region + "/" + info.siteid + "/" + fileType + "/" + date.getTime() + "-" + userName + "-" + getRegFileName(info.filename);
+    const blobName = "TEST/" + info.region + "/" + info.siteid + "/" + fileType + "/" + date.getTime() + "-" + userName + "-" + getRegFileName(info.filename);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     const uploadBlobResponse = await blockBlobClient.uploadFile(info.filepath);
     console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
     try {
         fs.unlinkSync(info.filepath)
         console.log("file removed");
-    } catch(err) {
+    } catch (err) {
         console.error(err)
     }
 
@@ -271,19 +151,19 @@ async function uploadFiles(info) {
         user_id: userID,
         user_name: userName,
         container_name: containerName,
-        blobl_name: blobName,
+        blob_name: blobName,
         uploaded_date: date,
         comments: ''
     }
 
     Blobs.insert(addedFile);
-    
+
     // List blobs
     i = 1;
     for await (const blob of containerClient.listBlobsFlat()) {
         console.log(`Blob ${i++}: ${blob.name}`);
     }
-  
+
     // // Delete container
     // await containerClient.delete();  
     // console.log("deleted container");
@@ -291,10 +171,10 @@ async function uploadFiles(info) {
     return true;
 }
 
-var upload = multer({dest:"uploads/"}).any();
+var upload = multer({ dest: "uploads/" }).any();
 
 WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
-    
+
     console.log("**********   POST fileupload ************\n");
 
     upload(req, res, function (err) {
@@ -304,7 +184,7 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
 
         var fields = req.fields;
         var file = req.files[0];
-        
+
         if (err) {
             console.error('Error', err)
             res.writeHead(404);
@@ -316,14 +196,14 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
         //   console.log(file)
         // }
 
-        try{
+        try {
             uploaded = true;
             // oldpath : temporary folder to which file is saved to
             const oldpath = file.path;
             const arr = fromURL.split("/");
             const region = arr[arr.length - 4];
-            const siteid = arr[arr.length -1];
-    
+            const siteid = arr[arr.length - 1];
+
             const fileInfo = {
                 region: region,
                 siteid: siteid,
@@ -333,29 +213,111 @@ WebApp.connectHandlers.use('/fileupload', (req, res, next) => {
                 uploadid: file.filename,
                 filepath: file.path
             }
-    
+
             //Upload to Azure Blob
             uploadFiles(fileInfo)
-            .then(res => {
-                return res; //list of uploaded file uuid
-            })
-            .catch((err) => {
-                console.error("Error Upload Files:", err.message);            
-                return {status: 'failed', message: err.message};
-                // throw new Meteor.Error('Uploading files failed.');
-            });       
+                .then(res => {
+                    return res; //list of uploaded file uuid
+                })
+                .catch((err) => {
+                    console.error("Error Upload Files:", err.message);
+                    return { status: 'failed', message: err.message };
+                    // throw new Meteor.Error('Uploading files failed.');
+                });
         }
-        catch(err) {
-            console.error("Error formidable:", err.message);            
-            return {status: 'failed', message: err.message};
+        catch (err) {
+            console.error("Error formidable:", err.message);
+            return { status: 'failed', message: err.message };
             // throw new Meteor.Error('Uploading files failed.');
-        };               
-
-        console.log("********** upload end ************");
+        };
     })
 
-    res.writeHead(200); 
+    res.writeHead(200);
     res.end("success");
+});
 
-    console.log("**********   POST fileupload END ************\n");
+const getBlobTempPublicUrl = (blobName) => {
+ 
+    const containerName = AZURE_CONTAINER_NAME;
+    const startDate = new Date();
+    const expiryDate = new Date(startDate);
+    expiryDate.setMinutes(startDate.getMinutes() + 100);
+    startDate.setMinutes(startDate.getMinutes() - 100);
+    
+    const sharedAccessPolicy = {
+        AccessPolicy: {
+            Permissions: azureStorage.BlobUtilities.SharedAccessPermissions.READ,
+            Start: startDate,
+            Expiry: expiryDate
+        }
+    };
+    
+    const token = blobService.generateSharedAccessSignature(containerName, blobName, sharedAccessPolicy);
+    
+    return blobService.getUrl(containerName, blobName, token);
+}
+
+Meteor.methods({
+    'getSiteFileList'({site_id}) {
+        try{
+            //file list
+            let files = [];
+            let fileDic = {};
+
+            const blobs = Blobs.find(
+                {site_id: site_id},
+                {
+                    fields: {              
+                        file_name: 1,
+                        file_type: 1,
+                        file_size: 1,
+                        user_name: 1,
+                        uploaded_date: 1,
+                        blob_name: 1,
+                        _id: 1
+                    },
+                    sort: {
+                        file_type: 1
+                    }
+                }
+            ).forEach( blob => 
+                {
+                    if( fileDic[blob.file_type] ) {
+                        fileDic[blob.file_type].children.push(
+                            {
+                                id: blob._id,
+                                text: blob.file_name,
+                                isLeaf: true,
+                                blobURL: getBlobTempPublicUrl(blob.blob_name)
+                            }
+                        );
+                    }
+                    else {
+                        fileDic[blob.file_type] = {
+                            id: blob.file_type,
+                            text: GetFileTypeName(blob.file_type),
+                            children: [
+                                {
+                                    id: blob._id,
+                                    text: blob.file_name,
+                                    isLeaf: true,
+                                    blobURL: getBlobTempPublicUrl(blob.blob_name)
+                                }
+                            ]
+                        }
+                    }                
+                }
+            )            
+           
+            //convert dic to array
+            for (var type in fileDic) {
+                files.push(fileDic[type]);
+            }
+
+            return files;
+            
+        }catch(err) {
+            throw new Meteor.Error('Failed.', err);
+        }
+    }
 });

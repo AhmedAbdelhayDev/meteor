@@ -51,6 +51,8 @@ import "../../../assets/css/treeview.css";
 import Blobs from "/imports/api/blobs";
 import {GetFileTypeName} from '../../../../constants/global';
 
+const path = require('path');
+
 // const Map = ReactMapboxGl({
 //     accessToken: MAPBOX_ACCESSTOKEN
 // });
@@ -63,6 +65,7 @@ class CommonPage extends Component {
             activeFirstTab: "1",
             siteData: null,
             site_id: null,
+            site_changed: false,
             files: []
         };
 
@@ -84,66 +87,22 @@ class CommonPage extends Component {
                 postal_code: siteData.abstract.zip_code
             });
 
-            //file list
-            const blobs = Blobs.find(
-                {site_id: site_id},
-                {
-                    fields: {              
-                        file_name: 1,
-                        file_type: 1,
-                        file_size: 1,
-                        user_name: 1,
-                        uploaded_date: 1,
-                        _id: 1
-                    },
-                    sort: {
-                        file_type: 1
-                    }
-                }
-            ).fetch();
-
-            let files = [];
-            let fileDic = {};
-            blobs.map(blob => {
-
-                if( fileDic[blob.file_type] ) {
-                    fileDic[blob.file_type].children.push(
-                        {
-                            id: blob._id,
-                            text: blob.file_name,
-                            isLeaf: true
-                        }
-                    );
-                }
-                else {
-                    fileDic[blob.file_type] = {
-                        id: blob.file_type,
-                        text: GetFileTypeName(blob.file_type),
-                        children: [
-                            {
-                                id: blob._id,
-                                text: blob.file_name,
-                                isLeaf: true
-                            }
-                        ]
-                    }
-                }                
-            });
-
-            //convert dic to array
-            Object.entries(fileDic).map(([key, value]) => {
-                files.push(value);
-            })
-      
-            return { siteData, site_id, files };
+            return { siteData, site_id, site_changed: true };
         }
 
         return null;
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if( prevState.site_id !== this.state.site_id ) {
-            
+        if( this.state.site_changed ) {
+            Meteor.call('getSiteFileList', {site_id: this.state.site_id}, (err, res) => {
+                if( err) {
+                    console.log("getSiteFileList error: ", err);
+                }
+                else {
+                    this.setState({ files: res, site_changed: false });
+                }
+            })
         }
     }
 
@@ -164,25 +123,56 @@ class CommonPage extends Component {
 
     onActionButtonClick(item, actionButton) {
         const buttonName = actionButton.type.name;
-        console.log('Action: trash, Item: ' + item.text);
         console.log('Action: trash, Item ID: ' + item.id);
+        console.log('Action: trash, Item: ' + item.text);
+        console.log('Action: trash, Item blob URL: ' + item.blobURL);
 
-        fetch('http://localhost:8080/employees/download')
-			.then(response => {
-				response.blob().then(blob => {
-					let url = window.URL.createObjectURL(blob);
-					let a = document.createElement('a');
-					a.href = url;
-					a.download = 'employees.json';
-					a.click();
-				});
-				//window.location.href = response.url;
-		});
+        if( item.isLeaf === false ) {
+            return;
+        }
+
+        switch(actionButton.key) {
+            case 'file_view':
+                {
+                    let url = item.blobURL;
+                    window.open(url);
+                    // //OR
+                    // let a = document.createElement('a');
+                    // a.href = url;
+                    // a.target = '_blank';
+                    // a.click();
+                }
+                break;
+            case 'file_download':
+                fetch(item.blobURL)
+                    .then(response => {                
+                        let basename = path.basename(response.url); //time-username-filename?params
+                        let arr0 = basename.split("?");  
+                        let fullname = arr0[0];
+                        let arr = fullname.split("-");
+                        let startIndex = arr[0].length + arr[1].length + 2;
+                        let filename = fullname.substr(startIndex);
+
+                        response.blob().then(blob => {
+                            let url = window.URL.createObjectURL(blob);
+                            let a = document.createElement('a');
+                            a.href = url;
+                            a.download = filename;
+                            a.click();
+                        });
+                        //window.location.href = response.url;
+                });
+                break;
+
+            default:
+                break;
+        }
     }
 
     render() {
         const actionButtons = [
-            (<div className={"glyph-icon iconsminds-download"} />)
+            (<div id='file_view' key='file_view' className={"glyph-icon iconsminds-preview"} />),
+            (<div id='file_download' key='file_download' className={"glyph-icon iconsminds-download"} />)
           ];
 
         if (this.state.siteData === null) {
