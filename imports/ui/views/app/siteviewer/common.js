@@ -18,8 +18,11 @@ import {
     Form,
     FormGroup,
     Input,
-    Button
+    Button,
 } from "reactstrap";
+
+// import Modal from 'react-bootstrap/Modal'
+
 import { NavLink } from "react-router-dom";
 import classnames from "classnames";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
@@ -49,7 +52,9 @@ import TreeView from 'deni-react-treeview';
 import "../../../assets/css/treeview.css";
 
 import Blobs from "/imports/api/blobs";
-import {GetFileTypeName} from '../../../../constants/global';
+import { GetFileTypeName } from '../../../../constants/global';
+import ArcadiaFileViewer from '../common/arcadiafileviewer';
+import JwModal from '../common/JwModal';
 
 const path = require('path');
 
@@ -66,10 +71,15 @@ class CommonPage extends Component {
             siteData: null,
             site_id: null,
             site_changed: false,
-            files: []
+            files: [],
+            modalShow: true,
+            filePath: '/',
+            fileType: ''
         };
 
-        this.onActionButtonClick = this.onActionButtonClick.bind(this);     
+        this.onActionButtonClick = this.onActionButtonClick.bind(this);
+        this.handleModalClose = this.handleModalClose.bind(this);
+        this.handleModalShow - this.handleModalShow.bind(this);
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -94,9 +104,9 @@ class CommonPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if( this.state.site_changed ) {
-            Meteor.call('getSiteFileList', {site_id: this.state.site_id}, (err, res) => {
-                if( err) {
+        if (this.state.site_changed) {
+            Meteor.call('getSiteFileList', { site_id: this.state.site_id }, (err, res) => {
+                if (err) {
                     console.log("getSiteFileList error: ", err);
                 }
                 else {
@@ -113,6 +123,18 @@ class CommonPage extends Component {
         document.body.appendChild(scriptGlb);
     }
 
+    handleModalClose() {
+        this.setState({
+            modalShow: false
+        })
+    }
+
+    handleModalShow() {
+        this.setState({
+            modalShow: true
+        })
+    }
+
     toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
@@ -127,15 +149,25 @@ class CommonPage extends Component {
         console.log('Action: trash, Item: ' + item.text);
         console.log('Action: trash, Item blob URL: ' + item.blobURL);
 
-        if( item.isLeaf === false ) {
+        if (!item.isLeaf) {
             return;
         }
 
-        switch(actionButton.key) {
+        switch (actionButton.key) {
             case 'file_view':
                 {
                     let url = item.blobURL;
-                    window.open(url);
+                    let basename = path.basename(url); //time-username-filename?params
+                    let arr0 = basename.split("?");
+                    let fullname = arr0[0];
+                    let extname = path.extname(fullname);
+                    extname = extname.substr(1);    //remove '.'
+
+                    this.setState({ filePath: url, fileType: extname, modalShow: true });
+                    JwModal.open('custom-modal-1');
+
+                    // window.open(url);
+                    //window.location.assign(url);
                     // //OR
                     // let a = document.createElement('a');
                     // a.href = url;
@@ -145,9 +177,9 @@ class CommonPage extends Component {
                 break;
             case 'file_download':
                 fetch(item.blobURL)
-                    .then(response => {                
+                    .then(response => {
                         let basename = path.basename(response.url); //time-username-filename?params
-                        let arr0 = basename.split("?");  
+                        let arr0 = basename.split("?");
                         let fullname = arr0[0];
                         let arr = fullname.split("-");
                         let startIndex = arr[0].length + arr[1].length + 2;
@@ -161,7 +193,7 @@ class CommonPage extends Component {
                             a.click();
                         });
                         //window.location.href = response.url;
-                });
+                    });
                 break;
 
             default:
@@ -173,7 +205,7 @@ class CommonPage extends Component {
         const actionButtons = [
             (<div id='file_view' key='file_view' className={"glyph-icon iconsminds-preview"} />),
             (<div id='file_download' key='file_download' className={"glyph-icon iconsminds-download"} />)
-          ];
+        ];
 
         if (this.state.siteData === null) {
             return <div>Please insert new site.</div>;
@@ -203,7 +235,7 @@ class CommonPage extends Component {
                 " " +
                 dateTime.ampm;
 
-            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;                        
+            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;
         }
 
         const { messages } = this.props.intl;
@@ -224,7 +256,7 @@ class CommonPage extends Component {
                                             <IntlMessages id="map" />
                                         </CardTitle>
 
-                                        <div id='map' style={{width:'100%', height:'400px'}}></div>
+                                        <div id='map' style={{ width: '100%', height: '400px' }}></div>
                                         {/* {renderHTML(someHTML)} */}
 
                                         {/* <Map
@@ -1838,8 +1870,8 @@ class CommonPage extends Component {
                                                                             >
                                                                                 {
                                                                                     messages[
-                                                                                        "site.data.owner." +
-                                                                                            key
+                                                                                    "site.data.owner." +
+                                                                                    key
                                                                                     ]
                                                                                 }
                                                                             </Label>
@@ -1892,8 +1924,8 @@ class CommonPage extends Component {
                                                                                     >
                                                                                         {
                                                                                             messages[
-                                                                                                "site.data.taxes." +
-                                                                                                    key
+                                                                                            "site.data.taxes." +
+                                                                                            key
                                                                                             ]
                                                                                         }
                                                                                     </Label>
@@ -1961,7 +1993,7 @@ class CommonPage extends Component {
                                                             }
                                                         </div>
                                                     </div>
-                                                </div>                                                
+                                                </div>
                                             </div>
                                         )}
                                         {/* <p className="text-muted text-small mb-2">
@@ -1999,18 +2031,18 @@ class CommonPage extends Component {
                                         </p>
                                         <TagsInputExample /> */}
                                     </CardBody>
-                                    
+
                                 </Card>
                                 <Card>
                                     <CardBody className="pt-0">
                                         <CardTitle className="mt-3 mb-3">
                                             <IntlMessages id="filelist" />
-                                        </CardTitle>                                    
+                                        </CardTitle>
                                         <TreeView
-                                            items={ this.state.files }
-                                            selectRow={ true }
-                                            actionButtons={ actionButtons }
-                                            onActionButtonClick={ this.onActionButtonClick }
+                                            items={this.state.files}
+                                            selectRow={true}
+                                            actionButtons={actionButtons}
+                                            onActionButtonClick={this.onActionButtonClick}
                                         />
                                     </CardBody>
                                 </Card>
@@ -2018,6 +2050,31 @@ class CommonPage extends Component {
                         </Row>
                     </Colxx>
                 </Row>
+                {/* <ArcadiaFileViewer fileType={this.state.fileType} filePath={this.state.filePath} /> */}
+
+                {/* <NewWindow>
+                    <Modal show={this.state.modalShow} onHide={this.handleModalClose} centered>
+                        <Modal.Body>                        
+                            {this.state.filePath !== "/" && this.state.modalShow && (
+                                <ArcadiaFileViewer fileType={this.state.fileType} filePath={this.state.filePath} />
+                            )}
+                        </Modal.Body>
+                    </Modal>
+                </NewWindow> */}
+                <button onClick={JwModal.open('custom-modal-1')}>Open Modal 1</button>
+                <JwModal id="custom-modal-1">
+
+                    <h1>A Custom Modal!</h1>
+                    <p>
+                        Home page text: <input type="text" name="bodyText"/>
+                    </p>
+
+                    {this.state.filePath !== "/" && this.state.modalShow && (
+                        <ArcadiaFileViewer fileType={this.state.fileType} filePath={this.state.filePath} />
+                    )}
+                    <button onClick={JwModal.close('custom-modal-1')}>Close</button>
+                </JwModal>
+
             </Fragment>
         );
     }

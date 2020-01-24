@@ -20,6 +20,7 @@
         "azure-storage": "^2.10.3",
         "chart.js": "2.7.2",
         "classnames": "2.2.6",
+        "custom-error": "^0.2.1",
         "deni-react-treeview": "^0.2.20",
         "es6-promisify": "^6.0.2",
         "filesize": "^6.0.1",
@@ -27,6 +28,7 @@
         "formidable": "^1.2.1",
         "formik": "^1.5.1",
         "indexof": "0.0.1",
+        "less": "^3.10.3",
         "mapbox-gl": "^1.6.1",
         "meteor-node-stubs": "^0.4.1",
         "moment": "2.22.2",
@@ -38,12 +40,14 @@
         "react-albus": "^2.0.0",
         "react-autosuggest": "^9.3.4",
         "react-big-calendar": "^0.23.0",
+        "react-bootstrap": "^1.0.0-beta.16",
         "react-chartjs-2": "^2.7.4",
         "react-circular-progressbar": "^2.0.2",
         "react-contextmenu": "^2.9.4",
         "react-datepicker": "^1.5.0",
         "react-dom": "^16.8.6",
         "react-dropzone-component": "^3.2.0",
+        "react-file-viewer": "^1.2.1",
         "react-google-maps": "^9.4.5",
         "react-image-lightbox": "^5.1.0",
         "react-intl": "2.4.0",
@@ -74,5 +78,8 @@
             "server": "server/main.js"
         },
         "testModule": "tests/main.js"
+    },
+    "devDependencies": {
+        "less-loader": "^5.0.0"
     }
 }
