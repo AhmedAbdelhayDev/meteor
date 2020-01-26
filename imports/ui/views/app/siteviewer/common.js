@@ -55,6 +55,8 @@ import Blobs from "/imports/api/blobs";
 import { GetFileTypeName } from '../../../../constants/global';
 import ArcadiaFileViewer from '../common/arcadiafileviewer';
 
+import { NotificationManager } from "../../../components/common/react-notifications";
+
 const path = require('path');
 
 // const Map = ReactMapboxGl({
@@ -179,21 +181,35 @@ class CommonPage extends Component {
             case 'file_download':
                 fetch(item.blobURL)
                     .then(response => {
-                        let basename = path.basename(response.url); //time-username-filename?params
-                        let arr0 = basename.split("?");
-                        let fullname = arr0[0];
-                        let arr = fullname.split("-");
-                        let startIndex = arr[0].length + arr[1].length + 2;
-                        let filename = fullname.substr(startIndex);
+                        if (response.ok === false) {
+                            NotificationManager.error(
+                                "Unexpectidely file downloading was failed.",
+                                "Alert",
+                                5000,
+                                null,
+                                null,
+                                ""  //className
+                              );
 
-                        response.blob().then(blob => {
-                            let url = window.URL.createObjectURL(blob);
-                            let a = document.createElement('a');
-                            a.href = url;
-                            a.download = filename;
-                            a.click();
-                        });
-                        //window.location.href = response.url;
+                            console.log(response.statusText)
+                        }
+                        else {
+                            let basename = path.basename(response.url); //time-username-filename?params
+                            let arr0 = basename.split("?");
+                            let fullname = arr0[0];
+                            let arr = fullname.split("-");
+                            let startIndex = arr[0].length + arr[1].length + 2;
+                            let filename = fullname.substr(startIndex);
+
+                            response.blob().then(blob => {
+                                let url = window.URL.createObjectURL(blob);
+                                let a = document.createElement('a');
+                                a.href = url;
+                                a.download = filename;
+                                a.click();
+                            });
+                            //window.location.href = response.url;
+                        }
                     });
                 break;
 
