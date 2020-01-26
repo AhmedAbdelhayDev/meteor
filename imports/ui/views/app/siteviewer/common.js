@@ -156,7 +156,15 @@ class CommonPage extends Component {
             case 'file_view':
                 {
                     let url = item.blobURL;
-                    // this.setState({ filePath: url, fileType: extname, modalShow: true });
+                    ///////////
+                    let basename = path.basename(url); //time-username-filename?params
+                    let arr0 = basename.split("?");
+                    let fullname = arr0[0];
+                    let extname = path.extname(fullname);
+                    extname = extname.substr(1);    //remove '.'
+
+                    this.setState({ filePath: url, fileType: extname, modalShow: true });
+                    ///////////
                     let p = btoa(url);
                     window.open(SERVER_ADDRESS + "preview?p=" + p);
 
