@@ -1,0 +1,15 @@
+
+Even with METEOR_ALLOW_SUPERUSER or --allow-superuser, permissions in your app
+directory will be incorrect if you ever attempt to perform any Meteor tasks as
+a normal user. If you need to fix your permissions, run the following command
+from the root of your project:
+
+  sudo chown -Rh <username> .meteor/local
+
+[[[[[ /home/warren/nastia/test/arcadia_web ]]]]]
+
+=> Started proxy.
+=> Started MongoDB.
+=> Started your app.
+
+=> App running at: http://159.89.84.196:3000/
