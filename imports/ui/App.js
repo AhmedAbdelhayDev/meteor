@@ -20,6 +20,9 @@ const ViewMain = React.lazy(() =>
 const ViewApp = React.lazy(() =>
   import(/* webpackChunkName: "views-app" */ './views/app')
 );
+const PreView = React.lazy(() =>
+  import(/* webpackChunkName: "views-app" */ './views/arcadiafileviewer')
+);
 const ViewUser = React.lazy(() =>
   import(/* webpackChunkName: "views-user" */ './views/user')
 );
@@ -84,6 +87,11 @@ class App extends Component {
                   <Route
                     path="/user"
                     render={props => <ViewUser {...props} />}
+                  />
+                  <Route
+                    path="/preview"
+                    exact
+                    render={props => <PreView {...props} />}
                   />
                   <Route
                     path="/error"

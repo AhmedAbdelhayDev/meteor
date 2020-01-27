@@ -1,0 +1,30 @@
+.pg-viewer-wrapper .pg-viewer {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.pg-viewer-wrapper .photo-viewer-container {    
+    height: fit-content !important;
+    width: fit-content !important;
+}
+
+.pg-viewer-wrapper img {
+    width: fit-content !important;
+    height: fit-content !important;
+}
+
+.fileview-container {
+    height: 95vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pg-viewer-wrapper {
+    overflow-y: inherit !important;
+}
+
+body{
+    padding-bottom: 0px !important;
+}

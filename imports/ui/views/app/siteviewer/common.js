@@ -18,8 +18,11 @@ import {
     Form,
     FormGroup,
     Input,
-    Button
+    Button,
 } from "reactstrap";
+
+// import Modal from 'react-bootstrap/Modal'
+
 import { NavLink } from "react-router-dom";
 import classnames from "classnames";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
@@ -49,7 +52,12 @@ import TreeView from 'deni-react-treeview';
 import "../../../assets/css/treeview.css";
 
 import Blobs from "/imports/api/blobs";
-import {GetFileTypeName} from '../../../../constants/global';
+import { GetFileTypeName } from '../../../../constants/global';
+import ArcadiaFileViewer from '../common/arcadiafileviewer';
+
+import { NotificationManager } from "../../../components/common/react-notifications";
+
+const path = require('path');
 
 // const Map = ReactMapboxGl({
 //     accessToken: MAPBOX_ACCESSTOKEN
@@ -63,10 +71,16 @@ class CommonPage extends Component {
             activeFirstTab: "1",
             siteData: null,
             site_id: null,
-            files: []
+            site_changed: false,
+            files: [],
+            modalShow: true,
+            filePath: '/',
+            fileType: ''
         };
 
-        this.onActionButtonClick = this.onActionButtonClick.bind(this);     
+        this.onActionButtonClick = this.onActionButtonClick.bind(this);
+        this.handleModalClose = this.handleModalClose.bind(this);
+        this.handleModalShow - this.handleModalShow.bind(this);
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -84,66 +98,22 @@ class CommonPage extends Component {
                 postal_code: siteData.abstract.zip_code
             });
 
-            //file list
-            const blobs = Blobs.find(
-                {site_id: site_id},
-                {
-                    fields: {              
-                        file_name: 1,
-                        file_type: 1,
-                        file_size: 1,
-                        user_name: 1,
-                        uploaded_date: 1,
-                        _id: 1
-                    },
-                    sort: {
-                        file_type: 1
-                    }
-                }
-            ).fetch();
-
-            let files = [];
-            let fileDic = {};
-            blobs.map(blob => {
-
-                if( fileDic[blob.file_type] ) {
-                    fileDic[blob.file_type].children.push(
-                        {
-                            id: blob._id,
-                            text: blob.file_name,
-                            isLeaf: true
-                        }
-                    );
-                }
-                else {
-                    fileDic[blob.file_type] = {
-                        id: blob.file_type,
-                        text: GetFileTypeName(blob.file_type),
-                        children: [
-                            {
-                                id: blob._id,
-                                text: blob.file_name,
-                                isLeaf: true
-                            }
-                        ]
-                    }
-                }                
-            });
-
-            //convert dic to array
-            Object.entries(fileDic).map(([key, value]) => {
-                files.push(value);
-            })
-      
-            return { siteData, site_id, files };
+            return { siteData, site_id, site_changed: true };
         }
 
         return null;
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if( prevState.site_id !== this.state.site_id ) {
-            
+        if (this.state.site_changed) {
+            Meteor.call('getSiteFileList', { site_id: this.state.site_id }, (err, res) => {
+                if (err) {
+                    console.log("getSiteFileList error: ", err);
+                }
+                else {
+                    this.setState({ files: res, site_changed: false });
+                }
+            })
         }
     }
 
@@ -152,6 +122,18 @@ class CommonPage extends Component {
         scriptGlb.src = SERVER_ADDRESS + "glbmap.js";
         scriptGlb.async = false;
         document.body.appendChild(scriptGlb);
+    }
+
+    handleModalClose() {
+        this.setState({
+            modalShow: false
+        })
+    }
+
+    handleModalShow() {
+        this.setState({
+            modalShow: true
+        })
     }
 
     toggleTab(tab) {
@@ -164,26 +146,83 @@ class CommonPage extends Component {
 
     onActionButtonClick(item, actionButton) {
         const buttonName = actionButton.type.name;
-        console.log('Action: trash, Item: ' + item.text);
         console.log('Action: trash, Item ID: ' + item.id);
+        console.log('Action: trash, Item: ' + item.text);
+        console.log('Action: trash, Item blob URL: ' + item.blobURL);
 
-        fetch('http://localhost:8080/employees/download')
-			.then(response => {
-				response.blob().then(blob => {
-					let url = window.URL.createObjectURL(blob);
-					let a = document.createElement('a');
-					a.href = url;
-					a.download = 'employees.json';
-					a.click();
-				});
-				//window.location.href = response.url;
-		});
+        if (!item.isLeaf) {
+            return;
+        }
+
+        switch (actionButton.key) {
+            case 'file_view':
+                {
+                    let url = item.blobURL;
+                    ///////////
+                    let basename = path.basename(url); //time-username-filename?params
+                    let arr0 = basename.split("?");
+                    let fullname = arr0[0];
+                    let extname = path.extname(fullname);
+                    extname = extname.substr(1);    //remove '.'
+
+                    this.setState({ filePath: url, fileType: extname, modalShow: true });
+                    ///////////
+                    let p = btoa(url);
+                    window.open(SERVER_ADDRESS + "preview?p=" + p);
+
+                    //window.location.assign(url);
+                    // //OR
+                    // let a = document.createElement('a');
+                    // a.href = url;
+                    // a.target = '_blank';
+                    // a.click();
+                }
+                break;
+            case 'file_download':
+                fetch(item.blobURL)
+                    .then(response => {
+                        if (response.ok === false) {
+                            NotificationManager.error(
+                                "Unexpectidely file downloading was failed.",
+                                "Alert",
+                                5000,
+                                null,
+                                null,
+                                ""  //className
+                              );
+
+                            console.log(response.statusText)
+                        }
+                        else {
+                            let basename = path.basename(response.url); //time-username-filename?params
+                            let arr0 = basename.split("?");
+                            let fullname = arr0[0];
+                            let arr = fullname.split("-");
+                            let startIndex = arr[0].length + arr[1].length + 2;
+                            let filename = fullname.substr(startIndex);
+
+                            response.blob().then(blob => {
+                                let url = window.URL.createObjectURL(blob);
+                                let a = document.createElement('a');
+                                a.href = url;
+                                a.download = filename;
+                                a.click();
+                            });
+                            //window.location.href = response.url;
+                        }
+                    });
+                break;
+
+            default:
+                break;
+        }
     }
 
     render() {
         const actionButtons = [
-            (<div className={"glyph-icon iconsminds-download"} />)
-          ];
+            (<div id='file_view' key='file_view' className={"glyph-icon iconsminds-preview"} />),
+            (<div id='file_download' key='file_download' className={"glyph-icon iconsminds-download"} />)
+        ];
 
         if (this.state.siteData === null) {
             return <div>Please insert new site.</div>;
@@ -213,7 +252,7 @@ class CommonPage extends Component {
                 " " +
                 dateTime.ampm;
 
-            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;                        
+            weatherTemperature = this.props.weatherData.data.Temperature.Imperial.Value;
         }
 
         const { messages } = this.props.intl;
@@ -234,7 +273,7 @@ class CommonPage extends Component {
                                             <IntlMessages id="map" />
                                         </CardTitle>
 
-                                        <div id='map' style={{width:'100%', height:'400px'}}></div>
+                                        <div id='map' style={{ width: '100%', height: '400px' }}></div>
                                         {/* {renderHTML(someHTML)} */}
 
                                         {/* <Map
@@ -1848,8 +1887,8 @@ class CommonPage extends Component {
                                                                             >
                                                                                 {
                                                                                     messages[
-                                                                                        "site.data.owner." +
-                                                                                            key
+                                                                                    "site.data.owner." +
+                                                                                    key
                                                                                     ]
                                                                                 }
                                                                             </Label>
@@ -1902,8 +1941,8 @@ class CommonPage extends Component {
                                                                                     >
                                                                                         {
                                                                                             messages[
-                                                                                                "site.data.taxes." +
-                                                                                                    key
+                                                                                            "site.data.taxes." +
+                                                                                            key
                                                                                             ]
                                                                                         }
                                                                                     </Label>
@@ -1971,7 +2010,7 @@ class CommonPage extends Component {
                                                             }
                                                         </div>
                                                     </div>
-                                                </div>                                                
+                                                </div>
                                             </div>
                                         )}
                                         {/* <p className="text-muted text-small mb-2">
@@ -2009,18 +2048,18 @@ class CommonPage extends Component {
                                         </p>
                                         <TagsInputExample /> */}
                                     </CardBody>
-                                    
+
                                 </Card>
                                 <Card>
                                     <CardBody className="pt-0">
                                         <CardTitle className="mt-3 mb-3">
                                             <IntlMessages id="filelist" />
-                                        </CardTitle>                                    
+                                        </CardTitle>
                                         <TreeView
-                                            items={ this.state.files }
-                                            selectRow={ true }
-                                            actionButtons={ actionButtons }
-                                            onActionButtonClick={ this.onActionButtonClick }
+                                            items={this.state.files}
+                                            selectRow={true}
+                                            actionButtons={actionButtons}
+                                            onActionButtonClick={this.onActionButtonClick}
                                         />
                                     </CardBody>
                                 </Card>
@@ -2028,6 +2067,18 @@ class CommonPage extends Component {
                         </Row>
                     </Colxx>
                 </Row>
+                {/* <ArcadiaFileViewer fileType={this.state.fileType} filePath={this.state.filePath} /> */}
+
+                {/* <NewWindow>
+                    <Modal show={this.state.modalShow} onHide={this.handleModalClose} centered>
+                        <Modal.Body>                        
+                            {this.state.filePath !== "/" && this.state.modalShow && (
+                                <ArcadiaFileViewer fileType={this.state.fileType} filePath={this.state.filePath} />
+                            )}
+                        </Modal.Body>
+                    </Modal>
+                </NewWindow> */}
+
             </Fragment>
         );
     }
